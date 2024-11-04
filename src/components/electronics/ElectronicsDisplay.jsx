@@ -16,7 +16,7 @@ const ElectronicsDisplay = () => {
     const fetchElectronics = async () => {
       try {
         setPageLoading(true);
-        const response = await axios.get(`http://localhost:8080/api/electronics?page=${currentPage}&size=10`);
+        const response = await axios.get(`http://localhost:8080/api/electronics?page=${currentPage}&size=12`);
         setElectronics(response.data.content);
         setTotalPages(response.data.totalPages);
         setTotalItems(response.data.totalElements);
