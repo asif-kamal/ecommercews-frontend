@@ -95,12 +95,15 @@ const ElectronicCard = ({ item }) => {
           {item.prices?.availability && (
             <div
               className={`font-medium ${
-                item.prices.availability.toLowerCase().includes("in stock")
+                item.prices.availability.toLowerCase().includes("in stock") ||
+                item.prices.availability.toLowerCase().includes("yes")
                   ? "text-green-600"
                   : "text-yellow-600"
               }`}
             >
-              {item.prices.availability}
+              {item.prices.availability.toLowerCase().includes("yes")
+                ? item.prices.availability.replace(/yes/i, "In stock")
+                : item.prices.availability}
             </div>
           )}
         </div>
