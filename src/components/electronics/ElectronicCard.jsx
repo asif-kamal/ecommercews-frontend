@@ -1,5 +1,6 @@
 const ElectronicCard = ({ item }) => {
-  console.log("Item data:", item); //console logging
+  console.log("Item data:", item);
+
   const formatPrice = (price) => {
     if (!price) return "Price not available";
     return new Intl.NumberFormat("en-US", {
@@ -13,14 +14,40 @@ const ElectronicCard = ({ item }) => {
     return new Date(dateString).toLocaleDateString();
   };
 
-  // Convert primaryCategories string to array
   const getCategoryArray = (categories) => {
     if (!categories) return [];
-    // Check if it's a comma-separated string
     if (typeof categories === "string") {
       return categories.split(",").map((cat) => cat.trim());
     }
     return [];
+  };
+
+  const getAvailabilityText = (availability) => {
+    if (!availability) return "";
+
+    const availabilityLower = availability.toLowerCase();
+    if (
+      availabilityLower === "yes" ||
+      availabilityLower === "true" ||
+      availabilityLower.includes("in stock")
+    ) {
+      return "In Stock";
+    }
+    return availability;
+  };
+
+  const getAvailabilityColor = (availability) => {
+    if (!availability) return "text-gray-600";
+
+    const availabilityLower = availability.toLowerCase();
+    if (
+      availabilityLower === "yes" ||
+      availabilityLower === "true" ||
+      availabilityLower.includes("in stock")
+    ) {
+      return "text-green-600";
+    }
+    return "text-yellow-600";
   };
 
   return (
@@ -94,21 +121,15 @@ const ElectronicCard = ({ item }) => {
         <div className="text-sm">
           {item.prices?.availability && (
             <div
-              className={`font-medium ${
-                item.prices.availability.toLowerCase().includes("in stock") ||
-                item.prices.availability.toLowerCase().includes("yes")
-                  ? "text-green-600"
-                  : "text-yellow-600"
-              }`}
+              className={`font-medium ${getAvailabilityColor(
+                item.prices.availability
+              )}`}
             >
-              {item.prices.availability.toLowerCase().includes("yes")
-                ? item.prices.availability.replace(/yes/i, "In stock")
-                : item.prices.availability}
+              {getAvailabilityText(item.prices.availability)}
             </div>
           )}
         </div>
 
-        {/* Optional: Add date information */}
         {item.dateAdded && (
           <div className="text-xs text-gray-400">
             Added: {formatDate(item.dateAdded)}
