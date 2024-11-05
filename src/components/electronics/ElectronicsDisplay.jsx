@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';  // Removed navigate
 import axios from 'axios';
 import ElectronicCard from './ElectronicCard';
 import LoadingSpinner from '../shared/LoadingSpinner';
@@ -6,17 +7,23 @@ import LoadingSpinner from '../shared/LoadingSpinner';
 const ElectronicsDisplay = () => {
   const [electronics, setElectronics] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [pageLoading, setPageLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const [totalItems, setTotalItems] = useState(0);
+  
+  const [searchParams, setSearchParams] = useSearchParams();
+  
+  // Get current page from URL or default to 0
+  const currentPage = parseInt(searchParams.get('page')) || 0;
+  const PAGE_SIZE = 12;
 
   useEffect(() => {
     const fetchElectronics = async () => {
       try {
-        setPageLoading(true);
-        const response = await axios.get(`http://localhost:8080/api/electronics?page=${currentPage}&size=12`);
+        setLoading(true);
+        const response = await axios.get(
+          `http://localhost:8080/api/electronics?page=${currentPage}&size=${PAGE_SIZE}`
+        );
         setElectronics(response.data.content);
         setTotalPages(response.data.totalPages);
         setTotalItems(response.data.totalElements);
@@ -24,7 +31,6 @@ const ElectronicsDisplay = () => {
         setError(err.message);
       } finally {
         setLoading(false);
-        setPageLoading(false);
       }
     };
 
@@ -33,14 +39,14 @@ const ElectronicsDisplay = () => {
 
   const handleNextPage = () => {
     if (currentPage < totalPages - 1) {
-      setCurrentPage(prev => prev + 1);
+      setSearchParams({ page: currentPage + 1 });
       window.scrollTo(0, 0);
     }
   };
 
   const handlePrevPage = () => {
     if (currentPage > 0) {
-      setCurrentPage(prev => prev - 1);
+      setSearchParams({ page: currentPage - 1 });
       window.scrollTo(0, 0);
     }
   };
@@ -56,28 +62,20 @@ const ElectronicsDisplay = () => {
   }
 
   return (
-   <div className="max-w-7xl mx-auto p-4">
+    <div className="max-w-7xl mx-auto p-4">
       <h1 className="text-2xl font-bold mb-6">Electronics Catalog</h1>
-      
-      {pageLoading ? (
-        <div className="flex justify-center py-8">
-          <LoadingSpinner />
-        </div>
-      ) : (
-        // Updated grid to show 2 cards per row on medium screens and 3 on large screens
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {electronics.map((item) => (
-            <ElectronicCard key={item.id} item={item} />
-          ))}
-        </div>
-      )}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        {electronics.map((item) => (
+          <ElectronicCard key={item.id} item={item} />
+        ))}
+      </div>
       
       <div className="mt-6 flex justify-center items-center gap-4">
         <button
           onClick={handlePrevPage}
-          disabled={currentPage === 0 || pageLoading}
+          disabled={currentPage === 0}
           className={`px-4 py-2 rounded ${
-            currentPage === 0 || pageLoading
+            currentPage === 0 
               ? 'bg-gray-300 cursor-not-allowed' 
               : 'bg-blue-500 hover:bg-blue-600 text-white'
           }`}
@@ -91,9 +89,9 @@ const ElectronicsDisplay = () => {
         
         <button
           onClick={handleNextPage}
-          disabled={currentPage === totalPages - 1 || pageLoading}
+          disabled={currentPage === totalPages - 1}
           className={`px-4 py-2 rounded ${
-            currentPage === totalPages - 1 || pageLoading
+            currentPage === totalPages - 1 
               ? 'bg-gray-300 cursor-not-allowed' 
               : 'bg-blue-500 hover:bg-blue-600 text-white'
           }`}
