@@ -1,5 +1,90 @@
+import { useState } from "react";
+
 const ElectronicCard = ({ item }) => {
+  const [imageError, setImageError] = useState(false);
+  const [imageLoading, setImageLoading] = useState(true);
+
   console.log("Item data:", item);
+
+  const getCategoryBasedPlaceholder = (category) => {
+    const categoryLower = (category || "").toLowerCase();
+
+    if (
+      categoryLower.includes("laptop") ||
+      categoryLower.includes("computer")
+    ) {
+      return "https://placehold.co/450x300/4A90E2/FFFFFF/png?text=Laptop";
+    } else if (
+      categoryLower.includes("phone") ||
+      categoryLower.includes("mobile")
+    ) {
+      return "https://placehold.co/450x300/50C878/FFFFFF/png?text=Smartphone";
+    } else if (
+      categoryLower.includes("gaming") ||
+      categoryLower.includes("console")
+    ) {
+      return "https://placehold.co/450x300/FF6B6B/FFFFFF/png?text=Gaming";
+    } else if (categoryLower.includes("camera")) {
+      return "https://placehold.co/450x300/FFD93D/FFFFFF/png?text=Camera";
+    } else if (
+      categoryLower.includes("headphone") ||
+      categoryLower.includes("audio")
+    ) {
+      return "https://placehold.co/450x300/9B59B6/FFFFFF/png?text=Audio";
+    } else if (
+      categoryLower.includes("tv") ||
+      categoryLower.includes("monitor")
+    ) {
+      return "https://placehold.co/450x300/E74C3C/FFFFFF/png?text=Display";
+    } else if (categoryLower.includes("tablet")) {
+      return "https://placehold.co/450x300/3498DB/FFFFFF/png?text=Tablet";
+    } else if (
+      categoryLower.includes("watch") ||
+      categoryLower.includes("wearable")
+    ) {
+      return "https://placehold.co/450x300/1ABC9C/FFFFFF/png?text=Wearable";
+    } else if (
+      categoryLower.includes("speaker") ||
+      categoryLower.includes("streaming")
+    ) {
+      return "https://placehold.co/450x300/F39C12/FFFFFF/png?text=Media";
+    } else if (
+      categoryLower.includes("appliance") ||
+      categoryLower.includes("vacuum")
+    ) {
+      return "https://placehold.co/450x300/8E44AD/FFFFFF/png?text=Appliance";
+    } else {
+      return "https://placehold.co/450x300/95A5A6/FFFFFF/png?text=Electronics";
+    }
+  };
+
+  const getImageSrc = (item) => {
+    // Check if imageUrl exists and is a valid URL format
+    if (!item.imageUrl || item.imageUrl.trim() === "") {
+      console.log(`No image URL for ${item.name}`);
+      return getCategoryBasedPlaceholder(item.category);
+    }
+
+    // Basic URL validation
+    try {
+      const url = new URL(item.imageUrl);
+      // Check for common problematic patterns
+      if (
+        url.hostname.includes("fitbit.com") ||
+        url.hostname.includes("sony.scene7.com") ||
+        url.pathname.includes("facebook")
+      ) {
+        console.log(
+          `Known problematic image URL for ${item.name}: ${item.imageUrl}`
+        );
+        return getCategoryBasedPlaceholder(item.category);
+      }
+      return item.imageUrl;
+    } catch (error) {
+      console.log(`Invalid image URL for ${item.name}: ${item.imageUrl}`);
+      return getCategoryBasedPlaceholder(item.category);
+    }
+  };
 
   const formatPrice = (price) => {
     if (!price) return "Price not available";
@@ -53,15 +138,29 @@ const ElectronicCard = ({ item }) => {
   return (
     <div className="w-full max-w-[450px] border rounded-lg shadow-sm overflow-hidden bg-white hover:shadow-lg transition-shadow">
       <div className="aspect-square w-full max-w-[450px] relative">
+        {imageLoading && !imageError && (
+          <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+          </div>
+        )}
         <img
-          src={
-            item.imageURLs || "https://via.placeholder.com/450?text=No+Image"
-          }
+          src={getImageSrc(item)}
           alt={item.name}
-          className="w-full h-full object-contain p-4"
+          className={`w-full h-full object-contain p-4 ${
+            imageLoading ? "opacity-0" : "opacity-100"
+          } transition-opacity duration-300`}
           loading="lazy"
+          onLoad={() => {
+            setImageLoading(false);
+            setImageError(false);
+          }}
           onError={(e) => {
-            e.target.src = "https://via.placeholder.com/450?text=No+Image";
+            console.log(
+              `Image failed to load for ${item.name}: ${item.imageUrl}`
+            );
+            setImageLoading(false);
+            setImageError(true);
+            e.target.src = getCategoryBasedPlaceholder(item.category);
           }}
         />
         {item.prices?.isSale && (
