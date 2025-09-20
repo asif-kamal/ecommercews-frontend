@@ -1,12 +1,13 @@
-import React from "react";
-import SectionHeading from "./SectionHeading";
+// import SectionHeading from "./SectionHeading";
 
-const NewProducts = () => {
-  return (
-    <>
-      <SectionHeading title={`New Products`} />
-    </>
-  );
-};
+// const items = [{}];
 
-export default NewProducts;
+// const NewProducts = () => {
+//   return (
+//     <>
+//       <SectionHeading title={`New Products`} />
+//     </>
+//   );
+// };
+
+// export default NewProducts;
