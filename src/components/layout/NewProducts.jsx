@@ -1,10 +1,10 @@
 import React from "react";
-import Carousel from "./Carousel";
+import SectionHeading from "./SectionHeading";
 
 const NewProducts = () => {
   return (
     <>
-      <Carousel title={`New Products`} />
+      <SectionHeading title={`New Products`} />
     </>
   );
 };

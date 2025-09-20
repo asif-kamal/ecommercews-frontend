@@ -1,6 +1,6 @@
 import React from "react";
 
-const Carousel = ({ title }) => {
+const SectionHeading = ({ title }) => {
   return (
     <div className="flex flex-wrap px-10 my-5">
       <div></div>
@@ -9,4 +9,4 @@ const Carousel = ({ title }) => {
   );
 };
 
-export default Carousel;
+export default SectionHeading;
