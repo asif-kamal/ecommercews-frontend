@@ -1,10 +1,10 @@
 import React from "react";
 
-const Carousel = () => {
+const Carousel = ({ title }) => {
   return (
-    <div className="flex flex-wrap justify-around">
+    <div className="flex flex-wrap px-10 my-5">
       <div></div>
-      <p>Heading</p>
+      <p>{title}</p>
     </div>
   );
 };
