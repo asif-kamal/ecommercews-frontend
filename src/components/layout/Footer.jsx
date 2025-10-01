@@ -1,8 +1,14 @@
 import FacebookIcon from "../common/FacebookIcon";
 import InstaIcon from "../common/InstagramIcon";
 
-
 const Footer = ({ content }) => {
+  const currentYear = new Date().getFullYear();
+
+  // Replace any year in the copyright text with the current year
+  const updatedCopyright = content?.copyright
+    ? content.copyright.replace(/©\s*\d{4}/, `© ${currentYear}`)
+    : `Copyright © ${currentYear} ecommercews`;
+
   return (
     <div className="bg-black text-white">
       <div className="flex p-8 justify-around gap-[40px]">
@@ -13,21 +19,29 @@ const Footer = ({ content }) => {
                 <p className="text-[16px] pb-[10px]">{item?.title}</p>
                 {item?.list &&
                   item?.list?.map((listItem, index) => (
-                    <a className="flex flex-col text-[14px] py-2" key={index} href={listItem?.path}>
+                    <a
+                      className="flex flex-col text-[14px] py-2"
+                      key={index}
+                      href={listItem?.path}
+                    >
                       {listItem?.label}
                     </a>
                   ))}
-                  {item?.description && <p className="">{item?.description}</p>}
+                {item?.description && <p className="">{item?.description}</p>}
               </div>
             );
           })}
       </div>
       <div className="flex gap-2 items-center justify-center py-4">
-          <a href="/fb"><FacebookIcon /></a>
-          <a href="/ig"><InstaIcon /></a>
+        <a href="/fb">
+          <FacebookIcon />
+        </a>
+        <a href="/ig">
+          <InstaIcon />
+        </a>
       </div>
       <p className="text-sm text-white text-center content-center">
-        {content?.copyright}
+        {updatedCopyright}
       </p>
     </div>
   );
