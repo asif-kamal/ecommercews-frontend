@@ -4,6 +4,7 @@ import ElectronicsDisplay from './components/electronics/ElectronicsDisplay';
 import CartItems from './components/cart/CartItems';  // Create this component if not exists
 import SearchResults from './components/search/SearchResults';  // Create this component if not exists
 import ShopDisplay from "./components/shop/ShopDisplay";
+import UserProfile from './components/user/UserProfile';
 
 export const router = createBrowserRouter([
     {
@@ -11,35 +12,35 @@ export const router = createBrowserRouter([
         element: <Layout />,
         children: [
             {
-                path: "/",
+                path: "",
                 element: <ElectronicsDisplay />
             },
             {
-                path: "/computers",
+                path: "computers",
                 element: <ElectronicsDisplay />  // Or create specific component
             },
             {
-                path: "/tv",
+                path: "tv",
                 element: <ElectronicsDisplay />  // Or create specific component
             },
             {
-                path: "/audiovideo",
+                path: "audiovideo",
                 element: <ElectronicsDisplay />  // Or create specific component
             },
             {
-                path: "/shop",
-                element: <ElectronicsDisplay />  // Or create specific component
-            },
-            {
-                path: "/cart-items",
+                path: "cart-items",
                 element: <CartItems />
             },
             {
-                path: "/search",
+                path: "search",
                 element: <SearchResults />
             },
             {
-                path: "/shop",
+                path: "account",
+                element: <UserProfile />
+            },
+            {
+                path: "shop",
                 element: <ShopDisplay />
             }
         ]

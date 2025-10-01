@@ -4,6 +4,7 @@ import Layout from './components/layout/Layout';
 import CartItems from './components/cart/CartItems';  // Create if not exists
 import SearchResults from './components/search/SearchResults';  // Import SearchResults component
 import ShopDisplay from './components/shop/ShopDisplay';
+import UserProfile from './components/user/UserProfile';
 
 function App() {
   return (
@@ -13,6 +14,10 @@ function App() {
         <Route path="search" element={<SearchResults />} />
         <Route path="shop" element={<ShopDisplay />} />
         <Route path="cart-items" element={<CartItems />} />
+        <Route path="account" element={<UserProfile />} />
+        <Route path="computers" element={<ElectronicsDisplay />} />
+        <Route path="tv" element={<ElectronicsDisplay />} />
+        <Route path="audiovideo" element={<ElectronicsDisplay />} />
       </Route>
     </Routes>
   );

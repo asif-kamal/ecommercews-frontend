@@ -9,7 +9,7 @@ const Navbar = () => {
   const navigate = useNavigate();
 
   const handleSearch = (e) => {
-    if (e.key === 'Enter' || e.type === 'click') {
+    if (e.key === "Enter" || e.type === "click") {
       e.preventDefault();
       if (searchQuery.trim()) {
         navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
@@ -18,8 +18,8 @@ const Navbar = () => {
   };
 
   const handleCategoryClick = (category) => {
-    if (category === 'shop') {
-      navigate('/shop');
+    if (category === "shop") {
+      navigate("/shop");
     } else {
       navigate(`/search?q=${encodeURIComponent(category)}`);
     }
@@ -39,7 +39,7 @@ const Navbar = () => {
         <ul className="flex flex-row-reverse gap-10 pr-8">
           <li>
             <button
-              onClick={() => handleCategoryClick('computer')}
+              onClick={() => handleCategoryClick("computer")}
               className="text-lg font-normal text-black hover:text-blue-700"
             >
               Computers
@@ -47,7 +47,7 @@ const Navbar = () => {
           </li>
           <li>
             <button
-              onClick={() => handleCategoryClick('tv')}
+              onClick={() => handleCategoryClick("tv")}
               className="text-lg font-normal text-black hover:text-blue-700"
             >
               TV
@@ -55,7 +55,7 @@ const Navbar = () => {
           </li>
           <li>
             <button
-              onClick={() => handleCategoryClick('audio video')}
+              onClick={() => handleCategoryClick("audio video")}
               className="text-lg font-normal text-black hover:text-blue-700"
             >
               Audio & Video
@@ -63,7 +63,7 @@ const Navbar = () => {
           </li>
           <li>
             <button
-              onClick={() => handleCategoryClick('shop')}
+              onClick={() => handleCategoryClick("shop")}
               className="text-lg font-normal text-black hover:text-blue-700"
             >
               Shop
@@ -110,9 +110,9 @@ const Navbar = () => {
             </button>
           </li>
           <li>
-            <button>
+            <Link to="/account">
               <AccountIcon />
-            </button>
+            </Link>
           </li>
           <li>
             <Link to="/cart-items">
