@@ -113,7 +113,9 @@ const UserProfile = () => {
                 Member Since
               </label>
               <p className="text-gray-800">
-                {user?.memberSince ? new Date(user.memberSince).toLocaleDateString() : 'N/A'}
+                {user?.memberSince
+                  ? new Date(user.memberSince).toLocaleDateString()
+                  : "N/A"}
               </p>
             </div>
           </div>
@@ -132,7 +134,8 @@ const UserProfile = () => {
           <div className="space-y-2">
             <p className="text-gray-800">{user?.address?.street}</p>
             <p className="text-gray-800">
-              {user?.address?.city}, {user?.address?.state} {user?.address?.zipCode}
+              {user?.address?.city}, {user?.address?.state}{" "}
+              {user?.address?.zipCode}
             </p>
             <p className="text-gray-800">{user?.address?.country}</p>
           </div>
