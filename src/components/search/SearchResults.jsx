@@ -20,14 +20,65 @@ const SearchResults = () => {
     const fetchSearchResults = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(
-          `http://localhost:8080/api/electronics/search?query=${encodeURIComponent(query)}&page=${currentPage}&size=${PAGE_SIZE}`
-        );
-        setResults(response.data.content);
-        setTotalPages(response.data.totalPages);
-        setTotalItems(response.data.totalElements);
+        setError(null);
+        
+        const searchUrl = `http://localhost:8080/api/electronics/search?query=${encodeURIComponent(query)}&page=${currentPage}&size=${PAGE_SIZE}`;
+        console.log('Making search request to:', searchUrl);
+        
+        try {
+          // Try the dedicated search endpoint first
+          const response = await axios.get(searchUrl, {
+            timeout: 10000,
+            headers: {
+              'Content-Type': 'application/json',
+            }
+          });
+          
+          console.log('Search response:', response.data);
+          setResults(response.data.content);
+          setTotalPages(response.data.totalPages);
+          setTotalItems(response.data.totalElements);
+        } catch (searchError) {
+          console.warn('Search endpoint failed, falling back to client-side filtering:', searchError.message);
+          
+          // Fallback to basic endpoint with client-side filtering
+          const fallbackUrl = `http://localhost:8080/api/electronics?page=0&size=100`;
+          const fallbackResponse = await axios.get(fallbackUrl, {
+            timeout: 10000,
+            headers: {
+              'Content-Type': 'application/json',
+            }
+          });
+          
+          // Client-side filtering
+          const allItems = fallbackResponse.data.content;
+          const filteredItems = allItems.filter(item => 
+            item.name.toLowerCase().includes(query.toLowerCase()) ||
+            item.brand.toLowerCase().includes(query.toLowerCase()) ||
+            item.category.toLowerCase().includes(query.toLowerCase()) ||
+            (item.description && item.description.toLowerCase().includes(query.toLowerCase()))
+          );
+
+          // Client-side pagination
+          const startIndex = currentPage * PAGE_SIZE;
+          const endIndex = startIndex + PAGE_SIZE;
+          const paginatedResults = filteredItems.slice(startIndex, endIndex);
+          
+          setResults(paginatedResults);
+          setTotalPages(Math.ceil(filteredItems.length / PAGE_SIZE));
+          setTotalItems(filteredItems.length);
+        }
       } catch (err) {
-        setError(err.message);
+        console.error('Search error:', err);
+        if (err.code === 'ECONNABORTED') {
+          setError('Request timeout - please try again');
+        } else if (err.response) {
+          setError(`Server error: ${err.response.status} - ${err.response.data?.message || err.response.statusText}`);
+        } else if (err.request) {
+          setError('Network error - please check if the backend server is running');
+        } else {
+          setError(`Error: ${err.message}`);
+        }
       } finally {
         setLoading(false);
       }
@@ -35,6 +86,11 @@ const SearchResults = () => {
 
     if (query) {
       fetchSearchResults();
+    } else {
+      setResults([]);
+      setTotalItems(0);
+      setTotalPages(0);
+      setLoading(false);
     }
   }, [query, currentPage]);
 
