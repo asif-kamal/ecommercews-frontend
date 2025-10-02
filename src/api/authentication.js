@@ -40,3 +40,31 @@ export const resendVerificationCodeAPI = async (emailData) => {
     throw error;
   }
 };
+
+export const getUserProfileAPI = async (token) => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/user/profile`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const updateUserProfileAPI = async (token, userData) => {
+  try {
+    const response = await axios.put(`${API_BASE_URL}/user/profile`, userData, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};

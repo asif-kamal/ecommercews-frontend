@@ -1,218 +1,281 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
+import { getUserProfileAPI, updateUserProfileAPI } from "../../api/authentication";
+import { getToken, removeToken, isAuthenticated } from "../../utils/jwt-helper";
 
 const UserProfile = () => {
-  const [user, setUser] = useState(null);
+  const navigate = useNavigate();
+  const [userProfile, setUserProfile] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    phoneNumber: ""
+  });
+  const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
 
-  // Mock user data - replace with actual API call
-  useEffect(() => {
-    const fetchUserData = () => {
-      try {
-        const mockUser = {
-          id: 1,
-          name: "John Doe",
-          email: "john.doe@example.com",
-          phone: "+1 (555) 123-4567",
-          address: {
-            street: "123 Main Street",
-            city: "San Francisco",
-            state: "CA",
-            zipCode: "94102",
-            country: "United States",
-          },
-          memberSince: "2023-01-15",
-          orderHistory: [
-            {
-              id: "ORD001",
-              date: "2025-09-20",
-              total: 1299.99,
-              status: "Delivered",
-            },
-            {
-              id: "ORD002",
-              date: "2025-08-15",
-              total: 599.99,
-              status: "Delivered",
-            },
-            {
-              id: "ORD003",
-              date: "2025-07-10",
-              total: 199.99,
-              status: "Processing",
-            },
-          ],
-        };
-        setUser(mockUser);
-        setLoading(false);
-      } catch (err) {
-        setError("Failed to load user data");
-        setLoading(false);
+  const fetchUserProfile = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError("");
+      const token = getToken();
+      
+      if (!token) {
+        navigate("/login");
+        return;
       }
-    };
 
-    // Use a shorter timeout to test
-    setTimeout(fetchUserData, 500);
-  }, []);
+      console.log("Fetching user profile...");
+      const profileData = await getUserProfileAPI(token);
+      console.log("Profile data received:", profileData);
+      
+      setUserProfile({
+        firstName: profileData.firstName || "",
+        lastName: profileData.lastName || "",
+        email: profileData.email || "",
+        phoneNumber: profileData.phoneNumber || ""
+      });
+
+    } catch (error) {
+      console.error("Error fetching user profile:", error);
+      
+      if (error.response?.status === 401) {
+        // Token expired or invalid
+        removeToken();
+        navigate("/login");
+      } else {
+        setError("Failed to load profile information. Please try again.");
+      }
+    } finally {
+      setLoading(false);
+    }
+  }, [navigate]);
+
+  useEffect(() => {
+    // Check if user is authenticated
+    if (!isAuthenticated()) {
+      navigate("/login");
+      return;
+    }
+
+    fetchUserProfile();
+  }, [navigate, fetchUserProfile]);
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setUserProfile(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleSave = async () => {
+    try {
+      setSaving(true);
+      setError("");
+      setSuccessMessage("");
+      
+      const token = getToken();
+      if (!token) {
+        navigate("/login");
+        return;
+      }
+
+      console.log("Updating user profile:", userProfile);
+      const updatedProfile = await updateUserProfileAPI(token, userProfile);
+      console.log("Profile updated successfully:", updatedProfile);
+      
+      setSuccessMessage("Profile updated successfully!");
+      setIsEditing(false);
+      
+      // Update local state with server response if needed
+      if (updatedProfile) {
+        setUserProfile(prev => ({
+          ...prev,
+          ...updatedProfile
+        }));
+      }
+
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      
+      if (error.response?.status === 401) {
+        removeToken();
+        navigate("/login");
+      } else if (error.response?.data?.message) {
+        setError(error.response.data.message);
+      } else {
+        setError("Failed to update profile. Please try again.");
+      }
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleCancel = () => {
+    setIsEditing(false);
+    setError("");
+    setSuccessMessage("");
+    // Reset form to original values
+    fetchUserProfile();
+  };
+
+  const handleLogout = () => {
+    removeToken();
+    navigate("/login");
+  };
 
   if (loading) {
     return (
       <div className="max-w-4xl mx-auto p-6">
-        <div className="animate-pulse">
-          <div className="h-8 bg-gray-300 rounded w-1/4 mb-6"></div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="bg-gray-300 h-64 rounded"></div>
-            <div className="bg-gray-300 h-64 rounded"></div>
+        <div className="bg-white rounded-lg shadow-md p-8">
+          <div className="flex items-center justify-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500"></div>
+            <span className="ml-3 text-gray-600">Loading profile...</span>
           </div>
         </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="max-w-4xl mx-auto p-6">
-        <div className="text-red-500 text-center p-4">Error: {error}</div>
       </div>
     );
   }
 
   return (
-    <div className="max-w-4xl mx-auto p-6 py-8">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        {/* Profile Information */}
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h2 className="text-xl font-semibold mb-4 text-gray-800">
-            Profile Information
-          </h2>
-
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-600">
-                Full Name
-              </label>
-              <p className="text-gray-800 font-medium">{user?.name}</p>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-600">
-                Email
-              </label>
-              <p className="text-gray-800">{user?.email}</p>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-600">
-                Phone
-              </label>
-              <p className="text-gray-800">{user?.phone}</p>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-600">
-                Member Since
-              </label>
-              <p className="text-gray-800">
-                {user?.memberSince
-                  ? new Date(user.memberSince).toLocaleDateString()
-                  : "N/A"}
-              </p>
-            </div>
-          </div>
-
-          <button className="mt-6 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors">
-            Edit Profile
+    <div className="max-w-4xl mx-auto p-6">
+      <div className="bg-white rounded-lg shadow-md p-8">
+        <div className="flex justify-between items-center mb-8">
+          <h1 className="text-3xl font-bold text-gray-800">My Account</h1>
+          <button
+            onClick={handleLogout}
+            className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition duration-200"
+          >
+            Logout
           </button>
         </div>
 
-        {/* Address Information */}
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h2 className="text-xl font-semibold mb-4 text-gray-800">
-            Shipping Address
-          </h2>
+        {error && (
+          <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md text-sm mb-6">
+            {error}
+          </div>
+        )}
 
-          <div className="space-y-2">
-            <p className="text-gray-800">{user?.address?.street}</p>
-            <p className="text-gray-800">
-              {user?.address?.city}, {user?.address?.state}{" "}
-              {user?.address?.zipCode}
+        {successMessage && (
+          <div className="bg-green-50 border border-green-200 text-green-600 px-4 py-3 rounded-md text-sm mb-6">
+            {successMessage}
+          </div>
+        )}
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              First Name
+            </label>
+            {isEditing ? (
+              <input
+                type="text"
+                name="firstName"
+                value={userProfile.firstName}
+                onChange={handleInputChange}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+                placeholder="Enter your first name"
+              />
+            ) : (
+              <div className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-md text-gray-800">
+                {userProfile.firstName || "Not provided"}
+              </div>
+            )}
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Last Name
+            </label>
+            {isEditing ? (
+              <input
+                type="text"
+                name="lastName"
+                value={userProfile.lastName}
+                onChange={handleInputChange}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+                placeholder="Enter your last name"
+              />
+            ) : (
+              <div className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-md text-gray-800">
+                {userProfile.lastName || "Not provided"}
+              </div>
+            )}
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Email
+            </label>
+            <div className="w-full px-3 py-2 bg-gray-100 border border-gray-200 rounded-md text-gray-600">
+              {userProfile.email || "Not provided"}
+              <span className="text-xs text-gray-500 block mt-1">Email cannot be changed</span>
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Phone Number
+            </label>
+            {isEditing ? (
+              <input
+                type="tel"
+                name="phoneNumber"
+                value={userProfile.phoneNumber}
+                onChange={handleInputChange}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+                placeholder="Enter your phone number"
+              />
+            ) : (
+              <div className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-md text-gray-800">
+                {userProfile.phoneNumber || "Not provided"}
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div className="mt-8 flex space-x-4">
+          {isEditing ? (
+            <>
+              <button
+                onClick={handleSave}
+                disabled={saving}
+                className="bg-orange-500 text-white px-6 py-2 rounded-md hover:bg-orange-600 transition duration-200 disabled:bg-gray-400 disabled:cursor-not-allowed"
+              >
+                {saving ? "Saving..." : "Save Changes"}
+              </button>
+              <button
+                onClick={handleCancel}
+                disabled={saving}
+                className="bg-gray-500 text-white px-6 py-2 rounded-md hover:bg-gray-600 transition duration-200 disabled:bg-gray-400 disabled:cursor-not-allowed"
+              >
+                Cancel
+              </button>
+            </>
+          ) : (
+            <button
+              onClick={() => setIsEditing(true)}
+              className="bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-600 transition duration-200"
+            >
+              Edit Profile
+            </button>
+          )}
+        </div>
+
+        <div className="mt-8 pt-6 border-t border-gray-200">
+          <h2 className="text-lg font-semibold text-gray-800 mb-4">Account Information</h2>
+          <div className="text-sm text-gray-600">
+            <p className="mb-2">
+              <span className="font-medium">Account Status:</span> Active
             </p>
-            <p className="text-gray-800">{user?.address?.country}</p>
+            <p>
+              <span className="font-medium">Member Since:</span> {new Date().toLocaleDateString()}
+            </p>
           </div>
-
-          <button className="mt-6 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition-colors">
-            Update Address
-          </button>
-        </div>
-      </div>
-
-      {/* Order History */}
-      <div className="mt-8 bg-white rounded-lg shadow-md p-6">
-        <h2 className="text-xl font-semibold mb-4 text-gray-800">
-          Recent Orders
-        </h2>
-
-        <div className="overflow-x-auto">
-          <table className="w-full table-auto">
-            <thead>
-              <tr className="border-b">
-                <th className="text-left py-2 px-4 font-medium text-gray-600">
-                  Order ID
-                </th>
-                <th className="text-left py-2 px-4 font-medium text-gray-600">
-                  Date
-                </th>
-                <th className="text-left py-2 px-4 font-medium text-gray-600">
-                  Total
-                </th>
-                <th className="text-left py-2 px-4 font-medium text-gray-600">
-                  Status
-                </th>
-                <th className="text-left py-2 px-4 font-medium text-gray-600">
-                  Action
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {user?.orderHistory?.map((order) => (
-                <tr key={order.id} className="border-b hover:bg-gray-50">
-                  <td className="py-3 px-4 font-medium text-blue-600">
-                    {order.id}
-                  </td>
-                  <td className="py-3 px-4 text-gray-700">
-                    {new Date(order.date).toLocaleDateString()}
-                  </td>
-                  <td className="py-3 px-4 text-gray-700">
-                    ${order.total.toFixed(2)}
-                  </td>
-                  <td className="py-3 px-4">
-                    <span
-                      className={`px-2 py-1 rounded-full text-xs font-medium ${
-                        order.status === "Delivered"
-                          ? "bg-green-100 text-green-800"
-                          : order.status === "Processing"
-                          ? "bg-yellow-100 text-yellow-800"
-                          : "bg-gray-100 text-gray-800"
-                      }`}
-                    >
-                      {order.status}
-                    </span>
-                  </td>
-                  <td className="py-3 px-4">
-                    <button className="text-blue-500 hover:text-blue-700 text-sm font-medium">
-                      View Details
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-
-        <div className="mt-4 text-center">
-          <button className="text-blue-500 hover:text-blue-700 font-medium">
-            View All Orders
-          </button>
         </div>
       </div>
     </div>
