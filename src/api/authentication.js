@@ -58,7 +58,7 @@ export const getUserProfileAPI = async (token) => {
         'Content-Type': 'application/json'
       }
     });
-    
+
     console.log('getUserProfileAPI - Response received:', response.data);
     return response.data;
   } catch (error) {
@@ -92,7 +92,7 @@ export const updateUserProfileAPI = async (token, userData) => {
         'Content-Type': 'application/json'
       }
     });
-    
+
     console.log('updateUserProfileAPI - Response received:', response.data);
     return response.data;
   } catch (error) {
@@ -105,7 +105,7 @@ export const updateUserProfileAPI = async (token, userData) => {
       method: error.config?.method,
       requestData: error.config?.data
     });
-    
+
     // If PUT fails, let's try some common alternative approaches
     if (error.response?.status === 500) {
       console.log('PUT failed with 500 error. This might be due to:');
@@ -115,7 +115,7 @@ export const updateUserProfileAPI = async (token, userData) => {
       console.log('4. Backend database constraint violation');
       console.log('5. Backend authentication/authorization issue');
     }
-    
+
     throw error;
   }
 };
