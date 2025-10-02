@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import GoogleSignIn from "../Buttons/GoogleSignIn";
+import { registerAPI } from "../../api/authentication";
+import { saveToken } from "../../utils/jwt-helper";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -11,6 +13,8 @@ const Register = () => {
     password: "",
     confirmPassword: "",
   });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const handleChange = (e) => {
     setFormData({
@@ -19,14 +23,68 @@ const Register = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // TODO: Add registration logic here
-    console.log("Registration form submitted:", formData);
+    setError("");
 
-    // For now, just navigate to login after "registration"
-    alert("Registration successful! Please login.");
-    navigate("/login");
+    // Client-side validation
+    if (formData.password !== formData.confirmPassword) {
+      setError("Passwords do not match!");
+      return;
+    }
+
+    if (formData.password.length < 6) {
+      setError("Password must be at least 6 characters long!");
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      // Prepare data for backend API
+      const registrationData = {
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        password: formData.password,
+        // Remove confirmPassword as backend doesn't need it
+      };
+
+      console.log("Sending registration data:", registrationData);
+
+      // Call the backend API
+      const response = await registerAPI(registrationData);
+
+      console.log("Registration response:", response);
+
+      // If registration successful and returns a token
+      if (response?.token) {
+        saveToken(response.token);
+        alert("Registration successful! Welcome!");
+        navigate("/account"); // Go directly to account page
+      } else {
+        // If successful but no token (need to login)
+        alert("Registration successful! Please login with your credentials.");
+        navigate("/login");
+      }
+    } catch (error) {
+      console.error("Registration error:", error);
+
+      // Handle different types of errors
+      if (error.response?.data?.message) {
+        setError(error.response.data.message);
+      } else if (error.response?.status === 409) {
+        setError(
+          "Email already exists! Please use a different email or login."
+        );
+      } else if (error.response?.status === 400) {
+        setError("Invalid registration data. Please check your inputs.");
+      } else {
+        setError("Registration failed. Please try again later.");
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleBackToLogin = () => {
@@ -100,6 +158,21 @@ const Register = () => {
 
           <div className="mb-4">
             <label className="block text-gray-700 text-sm font-bold mb-2">
+              Phone
+            </label>
+            <input
+              type="phone"
+              name="phone"
+              value={formData.phone}
+              onChange={handleChange}
+              className="w-full px-3 py-2 border rounded focus:outline-none focus:border-green-500"
+              placeholder="Enter your phone number"
+              required
+            />
+          </div>
+
+          <div className="mb-4">
+            <label className="block text-gray-700 text-sm font-bold mb-2">
               Password
             </label>
             <input
@@ -130,11 +203,23 @@ const Register = () => {
 
           <button
             type="submit"
-            className="w-full bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600 mb-4"
+            disabled={loading}
+            className={`w-full py-2 px-4 rounded mb-4 ${
+              loading
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-green-500 hover:bg-green-600"
+            } text-white`}
           >
-            Create Account
+            {loading ? "Creating Account..." : "Create Account"}
           </button>
         </form>
+
+        {/* Error Message */}
+        {error && (
+          <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+            {error}
+          </div>
+        )}
 
         <div className="text-center">
           <p className="text-gray-600 mb-4">Already have an account?</p>
