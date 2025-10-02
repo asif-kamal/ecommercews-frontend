@@ -21,13 +21,16 @@ const ElectronicsDisplay = () => {
     const fetchElectronics = async () => {
       try {
         setLoading(true);
+        console.log('Fetching electronics from:', `http://localhost:8080/api/electronics?page=${currentPage}&size=${PAGE_SIZE}`);
         const response = await axios.get(
           `http://localhost:8080/api/electronics?page=${currentPage}&size=${PAGE_SIZE}`
         );
+        console.log('Response received:', response.data);
         setElectronics(response.data.content);
         setTotalPages(response.data.totalPages);
         setTotalItems(response.data.totalElements);
       } catch (err) {
+        console.error('Error fetching electronics:', err);
         setError(err.message);
       } finally {
         setLoading(false);

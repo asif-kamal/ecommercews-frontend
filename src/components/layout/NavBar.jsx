@@ -3,6 +3,7 @@ import WishList from "../common/WishList";
 import AccountIcon from "../common/AccountIcon";
 import CartIcon from "../common/CartIcon";
 import { Link, useNavigate } from "react-router-dom";
+import { isAuthenticated } from "../../utils/jwt-helper";
 
 const Navbar = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -14,6 +15,14 @@ const Navbar = () => {
       if (searchQuery.trim()) {
         navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
       }
+    }
+  };
+
+  const handleAccountClick = () => {
+    if (isAuthenticated()) {
+      navigate("/account");
+    } else {
+      navigate("/login");
     }
   };
 
@@ -110,9 +119,9 @@ const Navbar = () => {
             </button>
           </li>
           <li>
-            <Link to="/account">
+            <button onClick={handleAccountClick}>
               <AccountIcon />
-            </Link>
+            </button>
           </li>
           <li>
             <Link to="/cart-items">

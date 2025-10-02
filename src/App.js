@@ -5,21 +5,27 @@ import CartItems from './components/cart/CartItems';  // Create if not exists
 import SearchResults from './components/search/SearchResults';  // Import SearchResults component
 import ShopDisplay from './components/shop/ShopDisplay';
 import UserProfile from './components/user/UserProfile';
+import Login from './components/pages/Login';
+import { Provider } from 'react-redux';
+import store from './store';
 
 function App() {
   return (
-    <Routes>
-      <Route path="/" element={<Layout />}>
-        <Route index element={<ElectronicsDisplay />} />
-        <Route path="search" element={<SearchResults />} />
-        <Route path="shop" element={<ShopDisplay />} />
-        <Route path="cart-items" element={<CartItems />} />
-        <Route path="account" element={<UserProfile />} />
-        <Route path="computers" element={<ElectronicsDisplay />} />
-        <Route path="tv" element={<ElectronicsDisplay />} />
-        <Route path="audiovideo" element={<ElectronicsDisplay />} />
-      </Route>
-    </Routes>
+    <Provider store={store}>
+      <Routes>
+        <Route path="/" element={<Layout />}>
+          <Route index element={<ElectronicsDisplay />} />
+          <Route path="search" element={<SearchResults />} />
+          <Route path="shop" element={<ShopDisplay />} />
+          <Route path="cart-items" element={<CartItems />} />
+          <Route path="account" element={<UserProfile />} />
+          <Route path="login" element={<Login />} />
+          <Route path="computers" element={<ElectronicsDisplay />} />
+          <Route path="tv" element={<ElectronicsDisplay />} />
+          <Route path="audiovideo" element={<ElectronicsDisplay />} />
+        </Route>
+      </Routes>
+    </Provider>
   );
 }
 
