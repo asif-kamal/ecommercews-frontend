@@ -4,7 +4,7 @@ import {
   verifyEmailAPI,
   resendVerificationCodeAPI,
 } from "../../api/authentication";
-import { saveToken } from "../../utils/jwt-helper";
+import { saveToken, isAuthenticated } from "../../utils/jwt-helper";
 
 const EmailVerification = () => {
   const navigate = useNavigate();
@@ -45,8 +45,8 @@ const EmailVerification = () => {
       setLoading(true);
 
       const verificationData = {
-        email: email,
-        verificationCode: verificationCode,
+        username: email,
+        code: verificationCode,
       };
 
       console.log("Sending verification data:", verificationData);
@@ -56,16 +56,32 @@ const EmailVerification = () => {
 
       console.log("Verification response:", response);
 
-      // If verification successful
+      // If verification successful and we receive a JWT token
       if (response?.token) {
+        // Save the JWT token to keep user logged in
         saveToken(response.token);
-        alert("Email verified successfully! Welcome!");
-        navigate("/account");
-      } else if (response?.success) {
+        console.log("JWT token saved, user is now logged in");
+
+        // Verify that the token was saved correctly and user is authenticated
+        if (isAuthenticated()) {
+          console.log("Authentication confirmed - user is logged in");
+          alert("Email verified successfully! Welcome!");
+          navigate("/account");
+        } else {
+          console.error("Token saved but authentication failed");
+          setError("Authentication failed. Please try logging in manually.");
+        }
+      } else if (response?.success || response?.message) {
+        // Fallback: verification successful but no token provided
         alert(
           "Email verified successfully! Please login with your credentials."
         );
         navigate("/login");
+      } else {
+        // Unexpected response format
+        setError(
+          "Verification completed but received unexpected response. Please try logging in."
+        );
       }
     } catch (error) {
       console.error("Verification error:", error);

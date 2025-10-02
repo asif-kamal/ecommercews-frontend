@@ -25,7 +25,7 @@ export const registerAPI = async (userData) => {
 
 export const verifyEmailAPI = async (verificationData) => {
   try {
-    const response = await axios.post(`${API_BASE_URL}/auth/verify-email`, verificationData);
+    const response = await axios.post(`${API_BASE_URL}/auth/verify`, verificationData);
     return response.data;
   } catch (error) {
     throw error;
