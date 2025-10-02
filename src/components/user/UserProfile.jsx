@@ -1,6 +1,9 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { getUserProfileAPI, updateUserProfileAPI } from "../../api/authentication";
+import {
+  getUserProfileAPI,
+  updateUserProfileAPI,
+} from "../../api/authentication";
 import { getToken, removeToken, isAuthenticated } from "../../utils/jwt-helper";
 
 const UserProfile = () => {
@@ -9,7 +12,7 @@ const UserProfile = () => {
     firstName: "",
     lastName: "",
     email: "",
-    phoneNumber: ""
+    phoneNumber: "",
   });
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -22,7 +25,7 @@ const UserProfile = () => {
       setLoading(true);
       setError("");
       const token = getToken();
-      
+
       if (!token) {
         navigate("/login");
         return;
@@ -31,17 +34,16 @@ const UserProfile = () => {
       console.log("Fetching user profile...");
       const profileData = await getUserProfileAPI(token);
       console.log("Profile data received:", profileData);
-      
+
       setUserProfile({
         firstName: profileData.firstName || "",
         lastName: profileData.lastName || "",
         email: profileData.email || "",
-        phoneNumber: profileData.phoneNumber || ""
+        phoneNumber: profileData.phoneNumber || "",
       });
-
     } catch (error) {
       console.error("Error fetching user profile:", error);
-      
+
       if (error.response?.status === 401) {
         // Token expired or invalid
         removeToken();
@@ -66,9 +68,9 @@ const UserProfile = () => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setUserProfile(prev => ({
+    setUserProfile((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
@@ -77,7 +79,7 @@ const UserProfile = () => {
       setSaving(true);
       setError("");
       setSuccessMessage("");
-      
+
       const token = getToken();
       if (!token) {
         navigate("/login");
@@ -87,21 +89,20 @@ const UserProfile = () => {
       console.log("Updating user profile:", userProfile);
       const updatedProfile = await updateUserProfileAPI(token, userProfile);
       console.log("Profile updated successfully:", updatedProfile);
-      
+
       setSuccessMessage("Profile updated successfully!");
       setIsEditing(false);
-      
+
       // Update local state with server response if needed
       if (updatedProfile) {
-        setUserProfile(prev => ({
+        setUserProfile((prev) => ({
           ...prev,
-          ...updatedProfile
+          ...updatedProfile,
         }));
       }
-
     } catch (error) {
       console.error("Error updating profile:", error);
-      
+
       if (error.response?.status === 401) {
         removeToken();
         navigate("/login");
@@ -213,7 +214,9 @@ const UserProfile = () => {
             </label>
             <div className="w-full px-3 py-2 bg-gray-100 border border-gray-200 rounded-md text-gray-600">
               {userProfile.email || "Not provided"}
-              <span className="text-xs text-gray-500 block mt-1">Email cannot be changed</span>
+              <span className="text-xs text-gray-500 block mt-1">
+                Email cannot be changed
+              </span>
             </div>
           </div>
 
@@ -267,13 +270,16 @@ const UserProfile = () => {
         </div>
 
         <div className="mt-8 pt-6 border-t border-gray-200">
-          <h2 className="text-lg font-semibold text-gray-800 mb-4">Account Information</h2>
+          <h2 className="text-lg font-semibold text-gray-800 mb-4">
+            Account Information
+          </h2>
           <div className="text-sm text-gray-600">
             <p className="mb-2">
               <span className="font-medium">Account Status:</span> Active
             </p>
             <p>
-              <span className="font-medium">Member Since:</span> {new Date().toLocaleDateString()}
+              <span className="font-medium">Member Since:</span>{" "}
+              {new Date().toLocaleDateString()}
             </p>
           </div>
         </div>
