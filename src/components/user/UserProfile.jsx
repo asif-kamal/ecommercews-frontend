@@ -34,12 +34,14 @@ const UserProfile = () => {
       console.log("Fetching user profile...");
       const profileData = await getUserProfileAPI(token);
       console.log("Profile data received:", profileData);
+      console.log("Phone field from backend:", profileData.phone || "not found");
+      console.log("PhoneNumber field from backend:", profileData.phoneNumber || "not found");
 
       setUserProfile({
         firstName: profileData.firstName || "",
         lastName: profileData.lastName || "",
         email: profileData.email || "",
-        phoneNumber: profileData.phoneNumber || "",
+        phoneNumber: profileData.phone || profileData.phoneNumber || "",
       });
     } catch (error) {
       console.error("Error fetching user profile:", error);
@@ -87,7 +89,16 @@ const UserProfile = () => {
       }
 
       console.log("Updating user profile:", userProfile);
-      const updatedProfile = await updateUserProfileAPI(token, userProfile);
+      
+      // Transform phoneNumber to phone for backend
+      const updateData = {
+        firstName: userProfile.firstName,
+        lastName: userProfile.lastName,
+        phone: userProfile.phoneNumber, // Send as 'phone' to match DB column
+      };
+      
+      console.log("Sending update data to backend:", updateData);
+      const updatedProfile = await updateUserProfileAPI(token, updateData);
       console.log("Profile updated successfully:", updatedProfile);
 
       setSuccessMessage("Profile updated successfully!");
@@ -97,7 +108,10 @@ const UserProfile = () => {
       if (updatedProfile) {
         setUserProfile((prev) => ({
           ...prev,
-          ...updatedProfile,
+          firstName: updatedProfile.firstName || prev.firstName,
+          lastName: updatedProfile.lastName || prev.lastName,
+          email: updatedProfile.email || prev.email,
+          phoneNumber: updatedProfile.phone || updatedProfile.phoneNumber || prev.phoneNumber,
         }));
       }
     } catch (error) {
