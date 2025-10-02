@@ -4,7 +4,6 @@ import {
   verifyEmailAPI,
   resendVerificationCodeAPI,
 } from "../../api/authentication";
-import { saveToken, isAuthenticated } from "../../utils/jwt-helper";
 
 const EmailVerification = () => {
   const navigate = useNavigate();
@@ -55,30 +54,39 @@ const EmailVerification = () => {
       const response = await verifyEmailAPI(verificationData);
 
       console.log("Verification response:", response);
+      console.log("Response type:", typeof response);
+      console.log("Response keys:", Object.keys(response || {}));
 
-      // If verification successful and we receive a JWT token
-      if (response?.token) {
-        // Save the JWT token to keep user logged in
-        saveToken(response.token);
-        console.log("JWT token saved, user is now logged in");
-
-        // Verify that the token was saved correctly and user is authenticated
-        if (isAuthenticated()) {
-          console.log("Authentication confirmed - user is logged in");
-          alert("Email verified successfully! Welcome!");
-          navigate("/account");
-        } else {
-          console.error("Token saved but authentication failed");
-          setError("Authentication failed. Please try logging in manually.");
-        }
-      } else if (response?.success || response?.message) {
-        // Fallback: verification successful but no token provided
+      // Handle empty string response (successful verification)
+      if (response === "" || response === null || response === undefined) {
+        console.log(
+          "Empty response received - treating as successful verification"
+        );
         alert(
-          "Email verified successfully! Please login with your credentials."
+          "Email verified successfully! Your account is now active. Please login with your credentials."
+        );
+        navigate("/login");
+        return;
+      }
+
+      // Handle successful verification response (no token expected)
+      if (
+        response?.success ||
+        response?.message ||
+        response?.status === "success" ||
+        typeof response === "object"
+      ) {
+        console.log("Verification successful - account activated");
+        alert(
+          "Email verified successfully! Your account is now active. Please login with your credentials."
         );
         navigate("/login");
       } else {
-        // Unexpected response format
+        // Log the full response for debugging
+        console.log(
+          "Unexpected response structure:",
+          JSON.stringify(response, null, 2)
+        );
         setError(
           "Verification completed but received unexpected response. Please try logging in."
         );
