@@ -63,9 +63,11 @@ const Register = () => {
         alert("Registration successful! Welcome!");
         navigate("/account"); // Go directly to account page
       } else {
-        // If successful but no token (need to login)
-        alert("Registration successful! Please login with your credentials.");
-        navigate("/login");
+        // If successful but no token (need email verification)
+        alert("Registration successful! Please check your email for verification code.");
+        navigate("/verify-email", { 
+          state: { email: formData.email } 
+        });
       }
     } catch (error) {
       console.error("Registration error:", error);

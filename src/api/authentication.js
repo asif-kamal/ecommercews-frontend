@@ -22,3 +22,21 @@ export const registerAPI = async (userData) => {
     throw error;
   }
 };
+
+export const verifyEmailAPI = async (verificationData) => {
+  try {
+    const response = await axios.post(`${API_BASE_URL}/auth/verify-email`, verificationData);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const resendVerificationCodeAPI = async (emailData) => {
+  try {
+    const response = await axios.post(`${API_BASE_URL}/auth/resend-verification`, emailData);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
