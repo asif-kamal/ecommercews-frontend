@@ -6,6 +6,7 @@ import SearchResults from './components/search/SearchResults';  // Import Search
 import ShopDisplay from './components/shop/ShopDisplay';
 import UserProfile from './components/user/UserProfile';
 import Login from './components/pages/Login';
+import Register from './components/pages/Register';
 import { Provider } from 'react-redux';
 import store from './store';
 
@@ -20,6 +21,7 @@ function App() {
           <Route path="cart-items" element={<CartItems />} />
           <Route path="account" element={<UserProfile />} />
           <Route path="login" element={<Login />} />
+          <Route path="register" element={<Register />} />
           <Route path="computers" element={<ElectronicsDisplay />} />
           <Route path="tv" element={<ElectronicsDisplay />} />
           <Route path="audiovideo" element={<ElectronicsDisplay />} />

@@ -1,11 +1,33 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
+import { saveToken } from "../../utils/jwt-helper";
 
-const GoogleSignIn = () => {
+const GoogleSignIn = ({ context = "login" }) => {
+  const navigate = useNavigate();
+
   const handleGoogleSignIn = () => {
     // Placeholder for Google Sign-In functionality
-    console.log("Google Sign-In clicked");
-    alert("Google Sign-In not implemented yet");
+    console.log(`Google Sign-In clicked for ${context}`);
+
+    // TODO: Implement actual Google OAuth here
+    // For now, simulate successful authentication
+    if (context === "login") {
+      // Simulate successful login
+      const mockToken = "google-auth-token-" + Date.now();
+      saveToken(mockToken);
+      alert("Google Sign-In successful!");
+      navigate("/account");
+    } else if (context === "register") {
+      // Simulate successful registration
+      alert("Google Sign-Up successful! Welcome!");
+      const mockToken = "google-auth-token-" + Date.now();
+      saveToken(mockToken);
+      navigate("/account");
+    }
   };
+
+  const buttonText =
+    context === "register" ? "Sign up with Google" : "Continue with Google";
 
   return (
     <button
@@ -30,7 +52,7 @@ const GoogleSignIn = () => {
           d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
         />
       </svg>
-      Continue with Google
+      {buttonText}
     </button>
   );
 };

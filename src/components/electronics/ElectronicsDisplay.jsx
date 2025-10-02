@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';  // Removed navigate
-import axios from 'axios';
-import ElectronicCard from './ElectronicCard';
-import LoadingSpinner from '../shared/LoadingSpinner';
+import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom"; // Removed navigate
+import axios from "axios";
+import ElectronicCard from "./ElectronicCard";
+import LoadingSpinner from "../shared/LoadingSpinner";
 
 const ElectronicsDisplay = () => {
   const [electronics, setElectronics] = useState([]);
@@ -10,27 +10,30 @@ const ElectronicsDisplay = () => {
   const [error, setError] = useState(null);
   const [totalPages, setTotalPages] = useState(0);
   const [totalItems, setTotalItems] = useState(0);
-  
+
   const [searchParams, setSearchParams] = useSearchParams();
-  
+
   // Get current page from URL or default to 0
-  const currentPage = parseInt(searchParams.get('page')) || 0;
+  const currentPage = parseInt(searchParams.get("page")) || 0;
   const PAGE_SIZE = 12;
 
   useEffect(() => {
     const fetchElectronics = async () => {
       try {
         setLoading(true);
-        console.log('Fetching electronics from:', `http://localhost:8080/api/electronics?page=${currentPage}&size=${PAGE_SIZE}`);
+        console.log(
+          "Fetching electronics from:",
+          `http://localhost:8080/api/electronics?page=${currentPage}&size=${PAGE_SIZE}`
+        );
         const response = await axios.get(
           `http://localhost:8080/api/electronics?page=${currentPage}&size=${PAGE_SIZE}`
         );
-        console.log('Response received:', response.data);
+        console.log("Response received:", response.data);
         setElectronics(response.data.content);
         setTotalPages(response.data.totalPages);
         setTotalItems(response.data.totalElements);
       } catch (err) {
-        console.error('Error fetching electronics:', err);
+        console.error("Error fetching electronics:", err);
         setError(err.message);
       } finally {
         setLoading(false);
@@ -72,31 +75,31 @@ const ElectronicsDisplay = () => {
           <ElectronicCard key={item.id} item={item} />
         ))}
       </div>
-      
+
       <div className="mt-6 flex justify-center items-center gap-4">
         <button
           onClick={handlePrevPage}
           disabled={currentPage === 0}
           className={`px-4 py-2 rounded ${
-            currentPage === 0 
-              ? 'bg-gray-300 cursor-not-allowed' 
-              : 'bg-blue-500 hover:bg-blue-600 text-white'
+            currentPage === 0
+              ? "bg-gray-300 cursor-not-allowed"
+              : "bg-blue-500 hover:bg-blue-600 text-white"
           }`}
         >
           Previous
         </button>
-        
+
         <span className="text-gray-600">
           Page {currentPage + 1} of {totalPages} ({totalItems} items)
         </span>
-        
+
         <button
           onClick={handleNextPage}
           disabled={currentPage === totalPages - 1}
           className={`px-4 py-2 rounded ${
-            currentPage === totalPages - 1 
-              ? 'bg-gray-300 cursor-not-allowed' 
-              : 'bg-blue-500 hover:bg-blue-600 text-white'
+            currentPage === totalPages - 1
+              ? "bg-gray-300 cursor-not-allowed"
+              : "bg-blue-500 hover:bg-blue-600 text-white"
           }`}
         >
           Next
