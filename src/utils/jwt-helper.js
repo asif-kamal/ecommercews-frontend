@@ -14,15 +14,37 @@ export const removeToken = () => {
 
 export const isAuthenticated = () => {
   const token = getToken();
-  if (!token) return false;
+  console.log("JWT Helper: Checking authentication...");
+  console.log("JWT Helper: Token exists:", token ? "Yes" : "No");
+
+  if (!token) {
+    console.log("JWT Helper: No token found");
+    return false;
+  }
 
   try {
     // Basic token validation - check if it's not expired
-    const payload = JSON.parse(atob(token.split('.')[1]));
+    console.log("JWT Helper: Attempting to parse token...");
+    const parts = token.split('.');
+    console.log("JWT Helper: Token parts count:", parts.length);
+
+    if (parts.length !== 3) {
+      console.error("JWT Helper: Invalid token format - should have 3 parts");
+      return false;
+    }
+
+    const payload = JSON.parse(atob(parts[1]));
+    console.log("JWT Helper: Token payload:", payload);
+
     const currentTime = Date.now() / 1000;
+    console.log("JWT Helper: Current time:", currentTime);
+    console.log("JWT Helper: Token exp:", payload.exp);
+    console.log("JWT Helper: Token valid:", payload.exp > currentTime);
+
     return payload.exp > currentTime;
   } catch (error) {
-    console.error('Error validating token:', error);
+    console.error('JWT Helper: Error validating token:', error);
+    console.error('JWT Helper: Token that failed:', token);
     return false;
   }
 };

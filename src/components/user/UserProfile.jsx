@@ -66,11 +66,27 @@ const UserProfile = () => {
 
   useEffect(() => {
     // Check if user is authenticated
-    if (!isAuthenticated()) {
+    console.log("UserProfile: Checking authentication...");
+    const token = getToken();
+    console.log("UserProfile: Token exists:", token ? "Yes" : "No");
+
+    if (token) {
+      console.log(
+        "UserProfile: Token preview:",
+        token.substring(0, 50) + "..."
+      );
+    }
+
+    const authenticated = isAuthenticated();
+    console.log("UserProfile: Is authenticated:", authenticated);
+
+    if (!authenticated) {
+      console.log("UserProfile: Not authenticated, redirecting to login...");
       navigate("/login");
       return;
     }
 
+    console.log("UserProfile: Authentication passed, fetching profile...");
     fetchUserProfile();
   }, [navigate, fetchUserProfile]);
 

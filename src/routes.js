@@ -5,6 +5,7 @@ import CartItems from './components/cart/CartItems';  // Create this component i
 import SearchResults from './components/search/SearchResults';  // Create this component if not exists
 import ShopDisplay from "./components/shop/ShopDisplay";
 import UserProfile from './components/user/UserProfile';
+import OAuth2LoginCallback from "./components/pages/OAuth2LoginCallback";
 
 export const router = createBrowserRouter([
     {
@@ -42,6 +43,14 @@ export const router = createBrowserRouter([
             {
                 path: "shop",
                 element: <ShopDisplay />
+            },
+            {
+                path: "oauth2/callback",
+                element: <OAuth2LoginCallback />
+            },
+            {
+                path: "oauth2/success",
+                element: <OAuth2LoginCallback />
             }
         ]
     }
