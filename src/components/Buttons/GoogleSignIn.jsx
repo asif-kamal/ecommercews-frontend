@@ -4,10 +4,17 @@ import { useCallback } from "react";
 const GoogleSignIn = ({ context = "login" }) => {
   const handleGoogleSignIn = useCallback(() => {
     console.log(`Initiating Google OAuth2 for ${context}`);
-    
+
+    // Clear any existing tokens to prevent conflicts
+    localStorage.removeItem("auth_token");
+
+    // Add state parameter to prevent CSRF attacks and track the flow
+    const state = `${context}_${Date.now()}`;
+
+    console.log("Redirecting to OAuth2 endpoint with state:", state);
+
     // Redirect to Spring Boot OAuth2 authorization endpoint
-    // This will handle the OAuth2 flow and redirect back to /oauth2/callback
-    window.location.href = "http://localhost:8080/oauth2/authorization/google";
+    window.location.href = `http://localhost:8080/oauth2/authorization/google?state=${state}`;
   }, [context]);
 
   const buttonText =

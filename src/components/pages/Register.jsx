@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import GoogleSignIn from "../Buttons/GoogleSignIn";
 import { registerAPI } from "../../api/authentication";
-import { saveToken } from "../../utils/jwt-helper";
+import { saveToken, isAuthenticated } from "../../utils/jwt-helper";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -15,6 +15,15 @@ const Register = () => {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  // Check if user is already authenticated and redirect to account page
+  useEffect(() => {
+    console.log("Register component: Checking if user is already authenticated...");
+    if (isAuthenticated()) {
+      console.log("Register component: User is already authenticated, redirecting to account page");
+      navigate("/account", { replace: true });
+    }
+  }, [navigate]);
 
   const handleChange = (e) => {
     setFormData({

@@ -24,10 +24,28 @@ const UserProfile = () => {
     try {
       setLoading(true);
       setError("");
+
+      // Add debugging for token check
+      console.log("UserProfile: Checking for authentication token...");
       const token = getToken();
+      console.log("UserProfile: Token found:", token ? "Yes" : "No");
+      console.log("UserProfile: isAuthenticated():", isAuthenticated());
 
       if (!token) {
-        navigate("/login");
+        console.log("UserProfile: No token found, redirecting to login");
+        // Add a small delay to allow for token to be saved from OAuth2 callback
+        setTimeout(() => {
+          const retryToken = getToken();
+          if (!retryToken) {
+            console.log(
+              "UserProfile: Still no token after retry, redirecting to login"
+            );
+            navigate("/login");
+          } else {
+            console.log("UserProfile: Token found on retry, fetching profile");
+            fetchUserProfile(); // Retry fetching profile
+          }
+        }, 500);
         return;
       }
 
