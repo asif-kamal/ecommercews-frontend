@@ -135,12 +135,33 @@ const CartItems = () => {
         ) {
           throw new Error(`Invalid item data: ${JSON.stringify(item)}`);
         }
+
+        // Calculate totalPrice with extra safety checks
+        const unitPrice = parseFloat(item.price);
+        const quantity = parseInt(item.quantity);
+        const totalPrice = parseFloat((unitPrice * quantity).toFixed(2));
+
+        // Validate calculated values
+        if (isNaN(unitPrice) || unitPrice <= 0) {
+          throw new Error(`Invalid unit price for ${item.name}: ${item.price}`);
+        }
+        if (isNaN(quantity) || quantity <= 0) {
+          throw new Error(
+            `Invalid quantity for ${item.name}: ${item.quantity}`
+          );
+        }
+        if (isNaN(totalPrice) || totalPrice <= 0) {
+          throw new Error(
+            `Invalid total price calculation for ${item.name}: ${totalPrice}`
+          );
+        }
+
         return {
-          productUuid: String(item.id), // Backend expects productUuid as string
+          productId: String(item.id), // Backend expects productId as string
           productName: String(item.name),
-          quantity: parseInt(item.quantity),
-          unitPrice: parseFloat(item.price), // Backend expects unitPrice
-          totalPrice: parseFloat((item.price * item.quantity).toFixed(2)), // Backend expects totalPrice
+          quantity: quantity,
+          unitPrice: unitPrice, // Backend expects unitPrice
+          totalPrice: totalPrice, // Backend expects totalPrice
         };
       });
 
@@ -159,7 +180,7 @@ const CartItems = () => {
         userEmail: orderData.userEmail,
         userName: orderData.userName,
         items: orderData.items.map((item) => ({
-          productUuid: String(item.productUuid), // Ensure UUID is string
+          productId: String(item.productId), // Ensure ID is string
           productName: String(item.productName),
           quantity: Number(item.quantity),
           unitPrice: Number(item.unitPrice),
@@ -197,31 +218,59 @@ const CartItems = () => {
       // Check each item structure
       orderData.items.forEach((item, index) => {
         console.log(`Item ${index}:`, {
-          productUuid: typeof item.productUuid + " " + item.productUuid,
+          productId: typeof item.productId + " " + item.productId,
           productName: typeof item.productName + " " + item.productName,
           quantity: typeof item.quantity + " " + item.quantity,
           unitPrice: typeof item.unitPrice + " " + item.unitPrice,
           totalPrice: typeof item.totalPrice + " " + item.totalPrice,
         });
 
-        // Validate that productUuid is not null/undefined
+        // Validate that productId is not null/undefined
         if (
-          !item.productUuid ||
-          item.productUuid === "undefined" ||
-          item.productUuid === "null"
+          !item.productId ||
+          item.productId === "undefined" ||
+          item.productId === "null"
         ) {
-          console.error(
-            `Invalid productUuid for item ${index}:`,
-            item.productUuid
-          );
+          console.error(`Invalid productId for item ${index}:`, item.productId);
           console.error(`Full item data:`, item);
           throw new Error(
-            `Product UUID is missing for item: ${item.productName}. This may be a sample product that cannot be checked out.`
+            `Product ID is missing for item: ${item.productName}. This may be a sample product that cannot be checked out.`
           );
         }
 
+        // Validate numeric fields are not null/NaN
+        if (
+          isNaN(item.quantity) ||
+          item.quantity === null ||
+          item.quantity === undefined
+        ) {
+          console.error(`Invalid quantity for item ${index}:`, item.quantity);
+          throw new Error(`Invalid quantity for item: ${item.productName}`);
+        }
+
+        if (
+          isNaN(item.unitPrice) ||
+          item.unitPrice === null ||
+          item.unitPrice === undefined
+        ) {
+          console.error(`Invalid unitPrice for item ${index}:`, item.unitPrice);
+          throw new Error(`Invalid unit price for item: ${item.productName}`);
+        }
+
+        if (
+          isNaN(item.totalPrice) ||
+          item.totalPrice === null ||
+          item.totalPrice === undefined
+        ) {
+          console.error(
+            `Invalid totalPrice for item ${index}:`,
+            item.totalPrice
+          );
+          throw new Error(`Invalid total price for item: ${item.productName}`);
+        }
+
         // Warn if using sample data
-        if (String(item.productUuid).startsWith("sample-uuid-")) {
+        if (String(item.productId).startsWith("sample-uuid-")) {
           console.warn(
             `Sample product detected: ${item.productName}. This checkout may fail on the backend.`
           );
@@ -295,6 +344,20 @@ const CartItems = () => {
         "Making request to:",
         "http://localhost:8080/api/receipts/checkout"
       );
+
+      // Log each item's data structure one more time before sending
+      console.log("=== FINAL DATA STRUCTURE TO BACKEND ===");
+      orderData.items.forEach((item, index) => {
+        console.log(`Item ${index + 1}:`, {
+          productId: `"${item.productId}" (${typeof item.productId})`,
+          productName: `"${item.productName}" (${typeof item.productName})`,
+          quantity: `${item.quantity} (${typeof item.quantity})`,
+          unitPrice: `${item.unitPrice} (${typeof item.unitPrice})`,
+          totalPrice: `${item.totalPrice} (${typeof item.totalPrice})`,
+        });
+        console.log(`Raw Item ${index + 1}:`, item);
+      });
+      console.log("=== END FINAL DATA STRUCTURE ===");
 
       const response = await fetch(
         "http://localhost:8080/api/receipts/checkout",
@@ -417,7 +480,9 @@ const CartItems = () => {
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold text-gray-800">Shopping Cart</h1>
           <div className="flex items-center gap-4">
-            <span className="text-gray-600">Welcome, {currentUser?.name}</span>
+            <span className="text-gray-600">
+              Welcome, {currentUser?.firstName}
+            </span>
             <div className="relative bg-indigo-600 text-white px-6 py-3 rounded-lg flex items-center gap-2">
               <ShoppingCart size={20} />
               Cart ({cartCount} items)
