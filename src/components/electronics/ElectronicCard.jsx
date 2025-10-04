@@ -1,6 +1,7 @@
 import { useState } from "react";
+import { ShoppingCart } from "lucide-react";
 
-const ElectronicCard = ({ item }) => {
+const ElectronicCard = ({ item, onAddToCart }) => {
   const [imageError, setImageError] = useState(false);
   const [imageLoading, setImageLoading] = useState(true);
 
@@ -185,22 +186,47 @@ const ElectronicCard = ({ item }) => {
           )}
         </div>
 
-        <div className="space-y-2">
-          <div className="font-semibold">
+        <div className="space-y-3">
+          <div className="space-y-1">
             {item.prices?.amountMin && (
-              <div>
-                Price: {formatPrice(item.prices.amountMin)}
+              <div className="text-2xl font-bold text-indigo-600">
+                {formatPrice(item.prices.amountMin)}
                 {item.prices.amountMax &&
                   item.prices.amountMax !== item.prices.amountMin &&
                   ` - ${formatPrice(item.prices.amountMax)}`}
               </div>
             )}
+            {!item.prices?.amountMin && (
+              <div className="text-xl font-semibold text-gray-500">
+                Price not available
+              </div>
+            )}
+
+            {item.prices?.merchant && (
+              <div className="text-sm text-gray-600">
+                Seller: {item.prices.merchant}
+              </div>
+            )}
           </div>
 
-          {item.prices?.merchant && (
-            <div className="text-sm text-gray-600">
-              Seller: {item.prices.merchant}
-            </div>
+          {/* Add to Cart Button */}
+          {item.prices?.amountMin && onAddToCart && (
+            <button
+              onClick={() =>
+                onAddToCart({
+                  id: item.id || Date.now(), // Use item ID or fallback
+                  name: item.name || "Unknown Product",
+                  price: item.prices.amountMin,
+                  image: getImageSrc(item),
+                  brand: item.brand,
+                  category: item.primaryCategories,
+                })
+              }
+              className="w-full bg-indigo-600 text-white py-3 px-4 rounded-lg hover:bg-indigo-700 transition-colors duration-200 flex items-center justify-center gap-2 font-semibold"
+            >
+              <ShoppingCart size={20} />
+              Add to Cart
+            </button>
           )}
         </div>
 

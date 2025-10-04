@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import ElectronicCard from "../electronics/ElectronicCard";
 import LoadingSpinner from "../shared/LoadingSpinner";
+import { isAuthenticated } from "../../utils/jwt-helper";
 
 const SearchResults = () => {
   const [searchParams] = useSearchParams();
@@ -12,9 +13,11 @@ const SearchResults = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const [totalItems, setTotalItems] = useState(0);
+  const [addToCartMessage, setAddToCartMessage] = useState("");
   const PAGE_SIZE = 12;
 
   const query = searchParams.get("q") || "";
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchSearchResults = async () => {
@@ -66,6 +69,21 @@ const SearchResults = () => {
     }
   }, [query, currentPage]);
 
+  const handleAddToCart = (product) => {
+    if (!isAuthenticated()) {
+      setAddToCartMessage("Please log in to add items to cart");
+      setTimeout(() => {
+        navigate("/login");
+      }, 1500);
+      return;
+    }
+
+    setAddToCartMessage(`✓ ${product.name} added to cart!`);
+    setTimeout(() => setAddToCartMessage(""), 3000);
+
+    console.log("Added to cart:", product);
+  };
+
   if (loading) return <LoadingSpinner />;
 
   if (error) {
@@ -81,6 +99,19 @@ const SearchResults = () => {
         </span>
       </h1>
 
+      {/* Add to Cart Message */}
+      {addToCartMessage && (
+        <div
+          className={`mb-4 p-3 rounded-lg text-center ${
+            addToCartMessage.includes("✓")
+              ? "bg-green-100 text-green-800"
+              : "bg-yellow-100 text-yellow-800"
+          }`}
+        >
+          {addToCartMessage}
+        </div>
+      )}
+
       {results.length === 0 ? (
         <div className="text-center py-8">
           <p className="text-gray-500">No results found for "{query}"</p>
@@ -89,7 +120,11 @@ const SearchResults = () => {
         <>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {results.map((item) => (
-              <ElectronicCard key={item.id} item={item} />
+              <ElectronicCard
+                key={item.id}
+                item={item}
+                onAddToCart={handleAddToCart}
+              />
             ))}
           </div>
 
