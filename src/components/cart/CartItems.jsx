@@ -157,11 +157,11 @@ const CartItems = () => {
         }
 
         return {
-          productId: String(item.id), // Backend expects productId as string
+          productId: String(item.id), // Backend maps this to productUuid
           productName: String(item.name),
           quantity: quantity,
-          unitPrice: unitPrice, // Backend expects unitPrice
-          totalPrice: totalPrice, // Backend expects totalPrice
+          price: unitPrice, // Backend expects 'price' field (maps to unitPrice)
+          subtotal: totalPrice, // Backend expects 'subtotal' field (maps to totalPrice)
         };
       });
 
@@ -180,11 +180,11 @@ const CartItems = () => {
         userEmail: orderData.userEmail,
         userName: orderData.userName,
         items: orderData.items.map((item) => ({
-          productId: String(item.productId), // Ensure ID is string
+          productId: String(item.productId), // Backend maps this to productUuid
           productName: String(item.productName),
           quantity: Number(item.quantity),
-          unitPrice: Number(item.unitPrice),
-          totalPrice: Number(item.totalPrice),
+          price: Number(item.price), // Backend expects 'price' field
+          subtotal: Number(item.subtotal), // Backend expects 'subtotal' field
         })),
         total: Number(orderData.total),
         orderDate: String(orderData.orderDate),
@@ -221,8 +221,8 @@ const CartItems = () => {
           productId: typeof item.productId + " " + item.productId,
           productName: typeof item.productName + " " + item.productName,
           quantity: typeof item.quantity + " " + item.quantity,
-          unitPrice: typeof item.unitPrice + " " + item.unitPrice,
-          totalPrice: typeof item.totalPrice + " " + item.totalPrice,
+          price: typeof item.price + " " + item.price,
+          subtotal: typeof item.subtotal + " " + item.subtotal,
         });
 
         // Validate that productId is not null/undefined
@@ -249,23 +249,20 @@ const CartItems = () => {
         }
 
         if (
-          isNaN(item.unitPrice) ||
-          item.unitPrice === null ||
-          item.unitPrice === undefined
+          isNaN(item.price) ||
+          item.price === null ||
+          item.price === undefined
         ) {
-          console.error(`Invalid unitPrice for item ${index}:`, item.unitPrice);
+          console.error(`Invalid price for item ${index}:`, item.price);
           throw new Error(`Invalid unit price for item: ${item.productName}`);
         }
 
         if (
-          isNaN(item.totalPrice) ||
-          item.totalPrice === null ||
-          item.totalPrice === undefined
+          isNaN(item.subtotal) ||
+          item.subtotal === null ||
+          item.subtotal === undefined
         ) {
-          console.error(
-            `Invalid totalPrice for item ${index}:`,
-            item.totalPrice
-          );
+          console.error(`Invalid subtotal for item ${index}:`, item.subtotal);
           throw new Error(`Invalid total price for item: ${item.productName}`);
         }
 
@@ -352,8 +349,8 @@ const CartItems = () => {
           productId: `"${item.productId}" (${typeof item.productId})`,
           productName: `"${item.productName}" (${typeof item.productName})`,
           quantity: `${item.quantity} (${typeof item.quantity})`,
-          unitPrice: `${item.unitPrice} (${typeof item.unitPrice})`,
-          totalPrice: `${item.totalPrice} (${typeof item.totalPrice})`,
+          price: `${item.price} (${typeof item.price})`,
+          subtotal: `${item.subtotal} (${typeof item.subtotal})`,
         });
         console.log(`Raw Item ${index + 1}:`, item);
       });
