@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { ShoppingCart, Plus, Minus, Trash2, Mail } from "lucide-react";
 import {
@@ -24,6 +24,79 @@ const CartItems = () => {
     getCartTotal,
   } = useCart();
 
+  // Fallback function to extract name from email
+  const fallbackToEmailExtraction = useCallback((userId) => {
+    let fullName = "User";
+    let firstName = "User";
+
+    if (userId && userId.includes("@")) {
+      // Extract name from email (e.g., "asif.kamal1489@gmail.com" -> "Asif Kamal")
+      const emailPart = userId.split("@")[0];
+      const nameParts = emailPart
+        .split(".")
+        .map((part) => part.charAt(0).toUpperCase() + part.slice(1));
+      fullName = nameParts.join(" ");
+      firstName = nameParts[0];
+    }
+
+    console.log("Using email extraction fallback:", { fullName, firstName });
+
+    setCurrentUser({
+      id: userId,
+      email: userId,
+      name: fullName,
+      firstName: firstName,
+      lastName: "",
+    });
+  }, []);
+
+  // Function to fetch user details from database
+  const fetchUserDetails = useCallback(
+    async (userId) => {
+      try {
+        const token = getToken();
+        console.log("Fetching user details for:", userId);
+
+        const response = await fetch(
+          `http://localhost:8080/api/users/${encodeURIComponent(userId)}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        if (response.ok) {
+          const userDetails = await response.json();
+          console.log("User details from database:", userDetails);
+
+          setCurrentUser({
+            id: userId,
+            email: userDetails.email || userId,
+            name:
+              `${userDetails.firstName || ""} ${
+                userDetails.lastName || ""
+              }`.trim() || "User",
+            firstName: userDetails.firstName || "User",
+            lastName: userDetails.lastName || "",
+          });
+        } else {
+          console.error("Failed to fetch user details:", response.status);
+          // Fallback to extracting from email if API fails
+          fallbackToEmailExtraction(userId);
+        }
+      } catch (error) {
+        console.error("Error fetching user details:", error);
+        // Fallback to extracting from email if API fails
+        fallbackToEmailExtraction(userId);
+      }
+      setLoading(false);
+    },
+    [fallbackToEmailExtraction]
+  );
+
   // Check authentication and get user info
   useEffect(() => {
     console.log("CartItems: Checking authentication...");
@@ -35,15 +108,15 @@ const CartItems = () => {
 
     // Get user info from JWT token
     const userFromToken = getUserFromToken();
+    console.log("Raw user data from JWT token:", userFromToken);
+
     if (userFromToken) {
-      setCurrentUser({
-        id: userFromToken.id,
-        email: userFromToken.email || userFromToken.id, // Use email or fallback to id
-        name: userFromToken.name || "User",
-      });
+      // Fetch full user details from database
+      fetchUserDetails(userFromToken.id);
+    } else {
+      setLoading(false);
     }
-    setLoading(false);
-  }, [navigate]);
+  }, [navigate, fetchUserDetails]);
 
   // Test function to check backend connectivity
   const testBackendConnection = async () => {
