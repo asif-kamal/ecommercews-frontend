@@ -4,10 +4,12 @@ import AccountIcon from "../common/AccountIcon";
 import CartIcon from "../common/CartIcon";
 import { Link, useNavigate } from "react-router-dom";
 import { isAuthenticated } from "../../utils/jwt-helper";
+import { useCart } from "../../context/CartContext";
 
 const Navbar = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
+  const { getCartCount } = useCart();
 
   const handleSearch = (e) => {
     if (e.key === "Enter" || e.type === "click") {
@@ -124,8 +126,13 @@ const Navbar = () => {
             </button>
           </li>
           <li>
-            <Link to="/cart-items">
+            <Link to="/cart-items" className="relative">
               <CartIcon />
+              {getCartCount() > 0 && (
+                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                  {getCartCount()}
+                </span>
+              )}
             </Link>
           </li>
         </ul>

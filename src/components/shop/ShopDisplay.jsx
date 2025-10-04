@@ -4,6 +4,7 @@ import axios from "axios";
 import ElectronicCard from "../electronics/ElectronicCard";
 import LoadingSpinner from "../shared/LoadingSpinner";
 import { isAuthenticated } from "../../utils/jwt-helper";
+import { useCart } from "../../context/CartContext";
 
 const ShopDisplay = () => {
   const [electronics, setElectronics] = useState([]);
@@ -12,6 +13,7 @@ const ShopDisplay = () => {
   const [addToCartMessage, setAddToCartMessage] = useState("");
   const PAGE_SIZE = 12;
   const navigate = useNavigate();
+  const { addToCart } = useCart();
 
   const fetchRandomProducts = useCallback(async () => {
     try {
@@ -41,13 +43,12 @@ const ShopDisplay = () => {
       return;
     }
 
+    addToCart(product);
     setAddToCartMessage(`✓ ${product.name} added to cart!`);
     setTimeout(() => setAddToCartMessage(""), 3000);
-
+    
     console.log("Added to cart:", product);
-  };
-
-  if (loading) return <LoadingSpinner />;
+  };  if (loading) return <LoadingSpinner />;
 
   if (error) {
     return (

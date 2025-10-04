@@ -6,6 +6,7 @@ import {
   isAuthenticated,
   getUserFromToken,
 } from "../../utils/jwt-helper";
+import { useCart } from "../../context/CartContext";
 
 // Sample products - In production, fetch from your API
 const sampleProducts = [
@@ -19,10 +20,20 @@ const sampleProducts = [
 
 const CartItems = () => {
   const navigate = useNavigate();
-  const [cartItems, setCartItems] = useState([]);
   const [orderStatus, setOrderStatus] = useState("");
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  // Use shared cart context instead of local state
+  const {
+    cartItems,
+    addToCart,
+    updateQuantity,
+    removeItem,
+    clearCart: clearCartItems,
+    getCartCount,
+    getCartTotal,
+  } = useCart();
 
   // Check authentication and get user info
   useEffect(() => {
@@ -44,40 +55,6 @@ const CartItems = () => {
     }
     setLoading(false);
   }, [navigate]);
-
-  const addToCart = (product) => {
-    setCartItems((prev) => {
-      const existing = prev.find((item) => item.id === product.id);
-      if (existing) {
-        return prev.map((item) =>
-          item.id === product.id
-            ? { ...item, quantity: item.quantity + 1 }
-            : item
-        );
-      }
-      return [...prev, { ...product, quantity: 1 }];
-    });
-  };
-
-  const updateQuantity = (productId, change) => {
-    setCartItems((prev) =>
-      prev
-        .map((item) =>
-          item.id === productId
-            ? { ...item, quantity: Math.max(0, item.quantity + change) }
-            : item
-        )
-        .filter((item) => item.quantity > 0)
-    );
-  };
-
-  const removeItem = (productId) => {
-    setCartItems((prev) => prev.filter((item) => item.id !== productId));
-  };
-
-  const calculateTotal = () => {
-    return cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
-  };
 
   // Test function to check backend connectivity
   const testBackendConnection = async () => {
@@ -155,7 +132,7 @@ const CartItems = () => {
         userEmail: String(currentUser.email || ""), // Ensure it's a simple string
         userName: String(currentUser.name || "User"), // Ensure it's a simple string
         items: validatedItems,
-        total: parseFloat(calculateTotal().toFixed(2)), // Ensure proper decimal calculation
+        total: parseFloat(getCartTotal().toFixed(2)), // Ensure proper decimal calculation
         orderDate: new Date().toISOString(),
       };
 
@@ -324,7 +301,7 @@ const CartItems = () => {
         setOrderStatus(
           `✓ Order confirmed! Receipt sent to ${currentUser.email}`
         );
-        setCartItems([]);
+        clearCartItems();
         setTimeout(() => setOrderStatus(""), 5000);
       } else if (response.status === 401) {
         console.error("Authentication failed - token may be expired");
@@ -348,7 +325,7 @@ const CartItems = () => {
             setOrderStatus(
               "✓ Order processed! (Response formatting issue resolved)"
             );
-            setCartItems([]);
+            clearCartItems();
             setTimeout(() => setOrderStatus(""), 5000);
           } else {
             setOrderStatus("✗ Order failed. Please try again.");
@@ -380,7 +357,7 @@ const CartItems = () => {
     }
   };
 
-  const cartCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+  const cartCount = getCartCount();
 
   if (loading) {
     return (
@@ -514,7 +491,7 @@ const CartItems = () => {
                     <div className="flex justify-between text-xl font-bold">
                       <span>Total:</span>
                       <span className="text-indigo-600">
-                        ${calculateTotal().toFixed(2)}
+                        ${getCartTotal().toFixed(2)}
                       </span>
                     </div>
                   </div>

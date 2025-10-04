@@ -4,6 +4,7 @@ import axios from "axios";
 import ElectronicCard from "./ElectronicCard";
 import LoadingSpinner from "../shared/LoadingSpinner";
 import { isAuthenticated } from "../../utils/jwt-helper";
+import { useCart } from "../../context/CartContext";
 
 const ElectronicsDisplay = () => {
   const [electronics, setElectronics] = useState([]);
@@ -15,6 +16,7 @@ const ElectronicsDisplay = () => {
 
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
+  const { addToCart } = useCart();
 
   // Get current page from URL or default to 0
   const currentPage = parseInt(searchParams.get("page")) || 0;
@@ -69,15 +71,13 @@ const ElectronicsDisplay = () => {
       return;
     }
 
-    // For now, we'll just show a success message
-    // In a real app, you'd integrate with cart state management
+    // Use the shared cart context to add the item
+    addToCart(product);
     setAddToCartMessage(`✓ ${product.name} added to cart!`);
     setTimeout(() => setAddToCartMessage(""), 3000);
-
+    
     console.log("Added to cart:", product);
-  };
-
-  if (loading) return <LoadingSpinner />;
+  };  if (loading) return <LoadingSpinner />;
 
   if (error) {
     return (

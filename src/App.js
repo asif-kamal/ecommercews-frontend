@@ -11,26 +11,29 @@ import EmailVerification from './components/pages/EmailVerification';
 import OAuth2LoginCallback from './components/pages/OAuth2LoginCallback'; // Add this
 import { Provider } from 'react-redux';
 import store from './store';
+import { CartProvider } from './context/CartContext';
 
 function App() {
   return (
     <Provider store={store}>
-      <Routes>
-        <Route path="/" element={<Layout />}>
-          <Route index element={<ElectronicsDisplay />} />
-          <Route path="search" element={<SearchResults />} />
-          <Route path="shop" element={<ShopDisplay />} />
-          <Route path="cart-items" element={<CartItems />} />
-          <Route path="account" element={<UserProfile />} />
-          <Route path="login" element={<Login />} />
-          <Route path="register" element={<Register />} />
-          <Route path="verify-email" element={<EmailVerification />} />
-          <Route path="oauth2/callback" element={<OAuth2LoginCallback />} /> {/* Add this */}
-          <Route path="computers" element={<ElectronicsDisplay />} />
-          <Route path="tv" element={<ElectronicsDisplay />} />
-          <Route path="audiovideo" element={<ElectronicsDisplay />} />
-        </Route>
-      </Routes>
+      <CartProvider>
+        <Routes>
+          <Route path="/" element={<Layout />}>
+            <Route index element={<ElectronicsDisplay />} />
+            <Route path="search" element={<SearchResults />} />
+            <Route path="shop" element={<ShopDisplay />} />
+            <Route path="cart-items" element={<CartItems />} />
+            <Route path="account" element={<UserProfile />} />
+            <Route path="login" element={<Login />} />
+            <Route path="register" element={<Register />} />
+            <Route path="verify-email" element={<EmailVerification />} />
+            <Route path="oauth2/callback" element={<OAuth2LoginCallback />} /> {/* Add this */}
+            <Route path="computers" element={<ElectronicsDisplay />} />
+            <Route path="tv" element={<ElectronicsDisplay />} />
+            <Route path="audiovideo" element={<ElectronicsDisplay />} />
+          </Route>
+        </Routes>
+      </CartProvider>
     </Provider>
   );
 }

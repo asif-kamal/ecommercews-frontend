@@ -6,6 +6,14 @@ const ElectronicCard = ({ item, onAddToCart }) => {
   const [imageLoading, setImageLoading] = useState(true);
 
   console.log("Item data:", item);
+  console.log("Item prices:", item.prices);
+  console.log("Item price fields:", {
+    prices: item.prices,
+    price: item.price,
+    amount: item.amount,
+    cost: item.cost,
+    value: item.value,
+  });
 
   const getCategoryBasedPlaceholder = (category) => {
     const categoryLower = (category || "").toLowerCase();
@@ -85,6 +93,24 @@ const ElectronicCard = ({ item, onAddToCart }) => {
       console.log(`Invalid image URL for ${item.name}: ${item.imageUrl}`);
       return getCategoryBasedPlaceholder(item.category);
     }
+  };
+
+  const getPrice = (item) => {
+    // Check multiple possible price field formats
+    if (item.prices?.amountMin) return item.prices.amountMin;
+    if (item.prices?.amount) return item.prices.amount;
+    if (item.price) return item.price;
+    if (item.amount) return item.amount;
+    if (item.cost) return item.cost;
+    if (item.value) return item.value;
+    return null;
+  };
+
+  const getPriceRange = (item) => {
+    const minPrice = getPrice(item);
+    const maxPrice = item.prices?.amountMax || item.maxPrice || item.priceMax;
+
+    return { minPrice, maxPrice };
   };
 
   const formatPrice = (price) => {
@@ -188,19 +214,26 @@ const ElectronicCard = ({ item, onAddToCart }) => {
 
         <div className="space-y-3">
           <div className="space-y-1">
-            {item.prices?.amountMin && (
-              <div className="text-2xl font-bold text-indigo-600">
-                {formatPrice(item.prices.amountMin)}
-                {item.prices.amountMax &&
-                  item.prices.amountMax !== item.prices.amountMin &&
-                  ` - ${formatPrice(item.prices.amountMax)}`}
-              </div>
-            )}
-            {!item.prices?.amountMin && (
-              <div className="text-xl font-semibold text-gray-500">
-                Price not available
-              </div>
-            )}
+            {(() => {
+              const { minPrice, maxPrice } = getPriceRange(item);
+
+              if (minPrice) {
+                return (
+                  <div className="text-2xl font-bold text-indigo-600">
+                    {formatPrice(minPrice)}
+                    {maxPrice &&
+                      maxPrice !== minPrice &&
+                      ` - ${formatPrice(maxPrice)}`}
+                  </div>
+                );
+              } else {
+                return (
+                  <div className="text-xl font-semibold text-gray-500">
+                    Price not available
+                  </div>
+                );
+              }
+            })()}
 
             {item.prices?.merchant && (
               <div className="text-sm text-gray-600">
@@ -210,24 +243,27 @@ const ElectronicCard = ({ item, onAddToCart }) => {
           </div>
 
           {/* Add to Cart Button */}
-          {item.prices?.amountMin && onAddToCart && (
-            <button
-              onClick={() =>
-                onAddToCart({
-                  id: item.id || Date.now(), // Use item ID or fallback
-                  name: item.name || "Unknown Product",
-                  price: item.prices.amountMin,
-                  image: getImageSrc(item),
-                  brand: item.brand,
-                  category: item.primaryCategories,
-                })
-              }
-              className="w-full bg-indigo-600 text-white py-3 px-4 rounded-lg hover:bg-indigo-700 transition-colors duration-200 flex items-center justify-center gap-2 font-semibold"
-            >
-              <ShoppingCart size={20} />
-              Add to Cart
-            </button>
-          )}
+          {(() => {
+            const price = getPrice(item);
+            return price && onAddToCart ? (
+              <button
+                onClick={() =>
+                  onAddToCart({
+                    id: item.id || Date.now(), // Use item ID or fallback
+                    name: item.name || "Unknown Product",
+                    price: price,
+                    image: getImageSrc(item),
+                    brand: item.brand,
+                    category: item.primaryCategories,
+                  })
+                }
+                className="w-full bg-indigo-600 text-white py-3 px-4 rounded-lg hover:bg-indigo-700 transition-colors duration-200 flex items-center justify-center gap-2 font-semibold"
+              >
+                <ShoppingCart size={20} />
+                Add to Cart
+              </button>
+            ) : null;
+          })()}
         </div>
 
         {item.primaryCategories && (
