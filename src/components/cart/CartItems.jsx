@@ -10,12 +10,17 @@ import { useCart } from "../../context/CartContext";
 
 // Sample products - In production, fetch from your API
 const sampleProducts = [
-  { id: 1, name: "Wireless Headphones", price: 79.99, image: "🎧" },
-  { id: 2, name: "Smart Watch", price: 199.99, image: "⌚" },
-  { id: 3, name: "Laptop Stand", price: 49.99, image: "💻" },
-  { id: 4, name: "USB-C Cable", price: 12.99, image: "🔌" },
-  { id: 5, name: "Bluetooth Speaker", price: 89.99, image: "🔊" },
-  { id: 6, name: "Wireless Mouse", price: 34.99, image: "🖱️" },
+  {
+    id: "sample-uuid-1",
+    name: "Wireless Headphones",
+    price: 79.99,
+    image: "🎧",
+  },
+  { id: "sample-uuid-2", name: "Smart Watch", price: 199.99, image: "⌚" },
+  { id: "sample-uuid-3", name: "Laptop Stand", price: 49.99, image: "💻" },
+  { id: "sample-uuid-4", name: "USB-C Cable", price: 12.99, image: "🔌" },
+  { id: "sample-uuid-5", name: "Bluetooth Speaker", price: 89.99, image: "🔊" },
+  { id: "sample-uuid-6", name: "Wireless Mouse", price: 34.99, image: "🖱️" },
 ];
 
 const CartItems = () => {
@@ -106,6 +111,18 @@ const CartItems = () => {
       return;
     }
 
+    // Check if cart contains sample products
+    const hasSampleProducts = cartItems.some((item) =>
+      String(item.id).startsWith("sample-uuid-")
+    );
+
+    if (hasSampleProducts) {
+      setOrderStatus(
+        "✗ Cannot checkout with sample products. Please add real products from the catalog."
+      );
+      return;
+    }
+
     let orderData;
     try {
       // Ensure all required fields are present and valid
@@ -119,11 +136,11 @@ const CartItems = () => {
           throw new Error(`Invalid item data: ${JSON.stringify(item)}`);
         }
         return {
-          productId: item.id,
-          productName: item.name,
-          quantity: item.quantity,
-          price: parseFloat(item.price), // Ensure it's a proper number
-          subtotal: parseFloat((item.price * item.quantity).toFixed(2)), // Ensure proper decimal calculation
+          productUuid: String(item.id), // Backend expects productUuid as string
+          productName: String(item.name),
+          quantity: parseInt(item.quantity),
+          unitPrice: parseFloat(item.price), // Backend expects unitPrice
+          totalPrice: parseFloat((item.price * item.quantity).toFixed(2)), // Backend expects totalPrice
         };
       });
 
@@ -142,11 +159,11 @@ const CartItems = () => {
         userEmail: orderData.userEmail,
         userName: orderData.userName,
         items: orderData.items.map((item) => ({
-          productId: Number(item.productId),
+          productUuid: String(item.productUuid), // Ensure UUID is string
           productName: String(item.productName),
           quantity: Number(item.quantity),
-          price: Number(item.price),
-          subtotal: Number(item.subtotal),
+          unitPrice: Number(item.unitPrice),
+          totalPrice: Number(item.totalPrice),
         })),
         total: Number(orderData.total),
         orderDate: String(orderData.orderDate),
@@ -180,12 +197,35 @@ const CartItems = () => {
       // Check each item structure
       orderData.items.forEach((item, index) => {
         console.log(`Item ${index}:`, {
-          productId: typeof item.productId + " " + item.productId,
+          productUuid: typeof item.productUuid + " " + item.productUuid,
           productName: typeof item.productName + " " + item.productName,
           quantity: typeof item.quantity + " " + item.quantity,
-          price: typeof item.price + " " + item.price,
-          subtotal: typeof item.subtotal + " " + item.subtotal,
+          unitPrice: typeof item.unitPrice + " " + item.unitPrice,
+          totalPrice: typeof item.totalPrice + " " + item.totalPrice,
         });
+
+        // Validate that productUuid is not null/undefined
+        if (
+          !item.productUuid ||
+          item.productUuid === "undefined" ||
+          item.productUuid === "null"
+        ) {
+          console.error(
+            `Invalid productUuid for item ${index}:`,
+            item.productUuid
+          );
+          console.error(`Full item data:`, item);
+          throw new Error(
+            `Product UUID is missing for item: ${item.productName}. This may be a sample product that cannot be checked out.`
+          );
+        }
+
+        // Warn if using sample data
+        if (String(item.productUuid).startsWith("sample-uuid-")) {
+          console.warn(
+            `Sample product detected: ${item.productName}. This checkout may fail on the backend.`
+          );
+        }
       });
 
       // Check JSON depth to avoid nesting issues

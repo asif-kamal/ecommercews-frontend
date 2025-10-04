@@ -75,9 +75,10 @@ const ElectronicsDisplay = () => {
     addToCart(product);
     setAddToCartMessage(`✓ ${product.name} added to cart!`);
     setTimeout(() => setAddToCartMessage(""), 3000);
-    
+
     console.log("Added to cart:", product);
-  };  if (loading) return <LoadingSpinner />;
+  };
+  if (loading) return <LoadingSpinner />;
 
   if (error) {
     return (

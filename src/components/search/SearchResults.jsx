@@ -83,9 +83,10 @@ const SearchResults = () => {
     addToCart(product);
     setAddToCartMessage(`✓ ${product.name} added to cart!`);
     setTimeout(() => setAddToCartMessage(""), 3000);
-    
+
     console.log("Added to cart:", product);
-  };  if (loading) return <LoadingSpinner />;
+  };
+  if (loading) return <LoadingSpinner />;
 
   if (error) {
     return <div className="text-red-500 text-center p-4">Error: {error}</div>;

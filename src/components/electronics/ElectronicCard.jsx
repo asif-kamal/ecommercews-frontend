@@ -14,6 +14,13 @@ const ElectronicCard = ({ item, onAddToCart }) => {
     cost: item.cost,
     value: item.value,
   });
+  console.log("Item ID details:", {
+    id: item.id,
+    uuid: item.uuid,
+    productId: item.productId,
+    productUuid: item.productUuid,
+    idType: typeof item.id,
+  });
 
   const getCategoryBasedPlaceholder = (category) => {
     const categoryLower = (category || "").toLowerCase();
