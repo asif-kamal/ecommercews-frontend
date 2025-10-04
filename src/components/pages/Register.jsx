@@ -18,9 +18,13 @@ const Register = () => {
 
   // Check if user is already authenticated and redirect to account page
   useEffect(() => {
-    console.log("Register component: Checking if user is already authenticated...");
+    console.log(
+      "Register component: Checking if user is already authenticated..."
+    );
     if (isAuthenticated()) {
-      console.log("Register component: User is already authenticated, redirecting to account page");
+      console.log(
+        "Register component: User is already authenticated, redirecting to account page"
+      );
       navigate("/account", { replace: true });
     }
   }, [navigate]);
@@ -73,9 +77,11 @@ const Register = () => {
         navigate("/account"); // Go directly to account page
       } else {
         // If successful but no token (need email verification)
-        alert("Registration successful! Please check your email for verification code.");
-        navigate("/verify-email", { 
-          state: { email: formData.email } 
+        alert(
+          "Registration successful! Please check your email for verification code."
+        );
+        navigate("/verify-email", {
+          state: { email: formData.email },
         });
       }
     } catch (error) {
