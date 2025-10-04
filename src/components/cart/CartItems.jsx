@@ -8,21 +8,6 @@ import {
 } from "../../utils/jwt-helper";
 import { useCart } from "../../context/CartContext";
 
-// Sample products - In production, fetch from your API
-const sampleProducts = [
-  {
-    id: "sample-uuid-1",
-    name: "Wireless Headphones",
-    price: 79.99,
-    image: "🎧",
-  },
-  { id: "sample-uuid-2", name: "Smart Watch", price: 199.99, image: "⌚" },
-  { id: "sample-uuid-3", name: "Laptop Stand", price: 49.99, image: "💻" },
-  { id: "sample-uuid-4", name: "USB-C Cable", price: 12.99, image: "🔌" },
-  { id: "sample-uuid-5", name: "Bluetooth Speaker", price: 89.99, image: "🔊" },
-  { id: "sample-uuid-6", name: "Wireless Mouse", price: 34.99, image: "🖱️" },
-];
-
 const CartItems = () => {
   const navigate = useNavigate();
   const [orderStatus, setOrderStatus] = useState("");
@@ -32,7 +17,6 @@ const CartItems = () => {
   // Use shared cart context instead of local state
   const {
     cartItems,
-    addToCart,
     updateQuantity,
     removeItem,
     clearCart: clearCartItems,
@@ -108,18 +92,6 @@ const CartItems = () => {
     // Validate cart items before creating order data
     if (!cartItems || cartItems.length === 0) {
       setOrderStatus("✗ Your cart is empty. Add some items before checkout.");
-      return;
-    }
-
-    // Check if cart contains sample products
-    const hasSampleProducts = cartItems.some((item) =>
-      String(item.id).startsWith("sample-uuid-")
-    );
-
-    if (hasSampleProducts) {
-      setOrderStatus(
-        "✗ Cannot checkout with sample products. Please add real products from the catalog."
-      );
       return;
     }
 
@@ -234,7 +206,7 @@ const CartItems = () => {
           console.error(`Invalid productId for item ${index}:`, item.productId);
           console.error(`Full item data:`, item);
           throw new Error(
-            `Product ID is missing for item: ${item.productName}. This may be a sample product that cannot be checked out.`
+            `Product ID is missing for item: ${item.productName}. Please try refreshing the page.`
           );
         }
 
@@ -264,13 +236,6 @@ const CartItems = () => {
         ) {
           console.error(`Invalid subtotal for item ${index}:`, item.subtotal);
           throw new Error(`Invalid total price for item: ${item.productName}`);
-        }
-
-        // Warn if using sample data
-        if (String(item.productId).startsWith("sample-uuid-")) {
-          console.warn(
-            `Sample product detected: ${item.productName}. This checkout may fail on the backend.`
-          );
         }
       });
 
@@ -499,127 +464,96 @@ const CartItems = () => {
           </div>
         )}
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Products */}
-          <div className="lg:col-span-2">
-            <h2 className="text-2xl font-semibold mb-4 text-gray-800">
-              Available Products
+        <div className="max-w-4xl mx-auto">
+          {/* Cart */}
+          <div className="bg-white rounded-lg shadow-lg p-6">
+            <h2 className="text-2xl font-semibold mb-6 text-gray-800">
+              Your Shopping Cart
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {sampleProducts.map((product) => (
-                <div
-                  key={product.id}
-                  className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition"
-                >
-                  <div className="text-5xl mb-4 text-center">
-                    {product.image}
-                  </div>
-                  <h3 className="font-semibold text-lg mb-2">{product.name}</h3>
-                  <p className="text-2xl font-bold text-indigo-600 mb-4">
-                    ${product.price.toFixed(2)}
-                  </p>
-                  <button
-                    onClick={() => addToCart(product)}
-                    className="w-full bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700 transition"
-                  >
-                    Add to Cart
-                  </button>
-                </div>
-              ))}
-            </div>
-          </div>
 
-          {/* Cart Sidebar */}
-          <div className="lg:col-span-1">
-            <div className="bg-white rounded-lg shadow-lg p-6 sticky top-8">
-              <h2 className="text-2xl font-semibold mb-4 text-gray-800">
-                Your Cart
-              </h2>
+            {cartItems.length === 0 ? (
+              <div className="text-center py-12">
+                <ShoppingCart
+                  size={64}
+                  className="mx-auto text-gray-300 mb-4"
+                />
+                <p className="text-gray-500 text-lg">Your cart is empty</p>
+                <p className="text-gray-400 mt-2">
+                  Browse our products and add some items to your cart!
+                </p>
+              </div>
+            ) : (
+              <>
+                <div className="space-y-4 mb-6 max-h-96 overflow-y-auto">
+                  {cartItems.map((item) => (
+                    <div key={item.id} className="border-b pb-4">
+                      <div className="flex justify-between items-start mb-2">
+                        <h4 className="font-medium flex-1">{item.name}</h4>
+                        <button
+                          onClick={() => removeItem(item.id)}
+                          className="text-red-500 hover:text-red-700 transition"
+                          title="Remove item"
+                        >
+                          <Trash2 size={18} />
+                        </button>
+                      </div>
 
-              {cartItems.length === 0 ? (
-                <div className="text-center py-8">
-                  <ShoppingCart
-                    size={48}
-                    className="mx-auto text-gray-300 mb-4"
-                  />
-                  <p className="text-gray-500">Your cart is empty</p>
-                  <p className="text-sm text-gray-400 mt-2">
-                    Add some products to get started!
-                  </p>
-                </div>
-              ) : (
-                <>
-                  <div className="space-y-4 mb-6 max-h-96 overflow-y-auto">
-                    {cartItems.map((item) => (
-                      <div key={item.id} className="border-b pb-4">
-                        <div className="flex justify-between items-start mb-2">
-                          <h4 className="font-medium flex-1">{item.name}</h4>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
                           <button
-                            onClick={() => removeItem(item.id)}
-                            className="text-red-500 hover:text-red-700 transition"
-                            title="Remove item"
+                            onClick={() => updateQuantity(item.id, -1)}
+                            className="bg-gray-200 hover:bg-gray-300 p-1 rounded transition"
                           >
-                            <Trash2 size={18} />
+                            <Minus size={16} />
+                          </button>
+                          <span className="w-8 text-center font-semibold">
+                            {item.quantity}
+                          </span>
+                          <button
+                            onClick={() => updateQuantity(item.id, 1)}
+                            className="bg-gray-200 hover:bg-gray-300 p-1 rounded transition"
+                          >
+                            <Plus size={16} />
                           </button>
                         </div>
-
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-2">
-                            <button
-                              onClick={() => updateQuantity(item.id, -1)}
-                              className="bg-gray-200 hover:bg-gray-300 p-1 rounded transition"
-                            >
-                              <Minus size={16} />
-                            </button>
-                            <span className="w-8 text-center font-semibold">
-                              {item.quantity}
-                            </span>
-                            <button
-                              onClick={() => updateQuantity(item.id, 1)}
-                              className="bg-gray-200 hover:bg-gray-300 p-1 rounded transition"
-                            >
-                              <Plus size={16} />
-                            </button>
-                          </div>
-                          <p className="font-semibold text-indigo-600">
-                            ${(item.price * item.quantity).toFixed(2)}
-                          </p>
-                        </div>
+                        <p className="font-semibold text-indigo-600">
+                          ${(item.price * item.quantity).toFixed(2)}
+                        </p>
                       </div>
-                    ))}
-                  </div>
-
-                  <div className="border-t pt-4 mb-4">
-                    <div className="flex justify-between text-xl font-bold">
-                      <span>Total:</span>
-                      <span className="text-indigo-600">
-                        ${getCartTotal().toFixed(2)}
-                      </span>
                     </div>
+                  ))}
+                </div>
+
+                <div className="border-t pt-4 mb-4">
+                  <div className="flex justify-between text-xl font-bold">
+                    <span>Total:</span>
+                    <span className="text-indigo-600">
+                      ${getCartTotal().toFixed(2)}
+                    </span>
                   </div>
+                </div>
 
-                  <button
-                    onClick={handleCheckout}
-                    className="w-full bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 transition font-semibold flex items-center justify-center gap-2"
-                  >
-                    <Mail size={20} />
-                    Checkout & Send Receipt
-                  </button>
+                <button
+                  onClick={handleCheckout}
+                  className="w-full bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 transition font-semibold flex items-center justify-center gap-2"
+                >
+                  <Mail size={20} />
+                  Checkout & Send Receipt
+                </button>
 
-                  {/* Temporary test button for debugging */}
-                  <button
-                    onClick={testBackendConnection}
-                    className="w-full mt-2 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition text-sm"
-                  >
-                    🔧 Test Backend Connection
-                  </button>
+                {/* Temporary test button for debugging */}
+                <button
+                  onClick={testBackendConnection}
+                  className="w-full mt-2 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition text-sm"
+                >
+                  🔧 Test Backend Connection
+                </button>
 
-                  <p className="text-sm text-gray-500 mt-2 text-center">
-                    Receipt will be sent to: {currentUser?.email}
-                  </p>
-                </>
-              )}
-            </div>
+                <p className="text-sm text-gray-500 mt-2 text-center">
+                  Receipt will be sent to: {currentUser?.email}
+                </p>
+              </>
+            )}
           </div>
         </div>
       </div>
