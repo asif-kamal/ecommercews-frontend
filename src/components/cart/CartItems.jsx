@@ -376,10 +376,7 @@ const CartItems = () => {
         return;
       }
 
-      console.log(
-        "Making request to:",
-        `${API_URL}/api/receipts/checkout`
-      );
+      console.log("Making request to:", `${API_URL}/api/receipts/checkout`);
 
       // Log each item's data structure one more time before sending
       console.log("=== FINAL DATA STRUCTURE TO BACKEND ===");
@@ -395,17 +392,14 @@ const CartItems = () => {
       });
       console.log("=== END FINAL DATA STRUCTURE ===");
 
-      const response = await fetch(
-        `${API_URL}/api/receipts/checkout`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: jsonBody,
-        }
-      );
+      const response = await fetch(`${API_URL}/api/receipts/checkout`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: jsonBody,
+      });
 
       console.log("Response status:", response.status);
       console.log(
