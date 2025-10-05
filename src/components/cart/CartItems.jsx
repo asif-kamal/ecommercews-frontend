@@ -7,6 +7,7 @@ import {
   getUserFromToken,
 } from "../../utils/jwt-helper";
 import { useCart } from "../../context/CartContext";
+import API_URL from "../../config/api";
 
 const CartItems = () => {
   const navigate = useNavigate();
@@ -58,7 +59,7 @@ const CartItems = () => {
         console.log("Fetching user details for:", userId);
 
         const response = await fetch(
-          `http://localhost:8080/api/users/${encodeURIComponent(userId)}`,
+          `${API_URL}/api/users/${encodeURIComponent(userId)}`,
           {
             method: "GET",
             headers: {
@@ -126,7 +127,7 @@ const CartItems = () => {
       console.log("Token available:", token ? "Yes" : "No");
 
       // Test a simple GET request first
-      const response = await fetch("http://localhost:8080/api/receipts/test", {
+      const response = await fetch(`${API_URL}/api/receipts/test`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -377,7 +378,7 @@ const CartItems = () => {
 
       console.log(
         "Making request to:",
-        "http://localhost:8080/api/receipts/checkout"
+        `${API_URL}/api/receipts/checkout`
       );
 
       // Log each item's data structure one more time before sending
@@ -395,7 +396,7 @@ const CartItems = () => {
       console.log("=== END FINAL DATA STRUCTURE ===");
 
       const response = await fetch(
-        "http://localhost:8080/api/receipts/checkout",
+        `${API_URL}/api/receipts/checkout`,
         {
           method: "POST",
           headers: {

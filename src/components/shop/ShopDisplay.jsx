@@ -5,6 +5,7 @@ import ElectronicCard from "../electronics/ElectronicCard";
 import LoadingSpinner from "../shared/LoadingSpinner";
 import { isAuthenticated } from "../../utils/jwt-helper";
 import { useCart } from "../../context/CartContext";
+import API_URL from "../../config/api";
 
 const ShopDisplay = () => {
   const [electronics, setElectronics] = useState([]);
@@ -19,7 +20,7 @@ const ShopDisplay = () => {
     try {
       setLoading(true);
       const response = await axios.get(
-        `http://localhost:8080/api/electronics/shop?size=${PAGE_SIZE}`
+        `${API_URL}/api/electronics/shop?size=${PAGE_SIZE}`
       );
       setElectronics(response.data.content);
     } catch (err) {

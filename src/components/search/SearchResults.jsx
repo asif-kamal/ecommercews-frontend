@@ -5,6 +5,7 @@ import ElectronicCard from "../electronics/ElectronicCard";
 import LoadingSpinner from "../shared/LoadingSpinner";
 import { isAuthenticated } from "../../utils/jwt-helper";
 import { useCart } from "../../context/CartContext";
+import API_URL from "../../config/api";
 
 const SearchResults = () => {
   const [searchParams] = useSearchParams();
@@ -29,7 +30,7 @@ const SearchResults = () => {
 
         // Use the working electronics endpoint with client-side filtering
         const response = await axios.get(
-          `http://localhost:8080/api/electronics?page=0&size=100`
+          `${API_URL}/api/electronics?page=0&size=100`
         );
 
         // Filter results based on search query

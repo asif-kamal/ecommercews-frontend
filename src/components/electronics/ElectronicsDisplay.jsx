@@ -5,6 +5,7 @@ import ElectronicCard from "./ElectronicCard";
 import LoadingSpinner from "../shared/LoadingSpinner";
 import { isAuthenticated } from "../../utils/jwt-helper";
 import { useCart } from "../../context/CartContext";
+import API_URL from "../../config/api";
 
 const ElectronicsDisplay = () => {
   const [electronics, setElectronics] = useState([]);
@@ -28,10 +29,10 @@ const ElectronicsDisplay = () => {
         setLoading(true);
         console.log(
           "Fetching electronics from:",
-          `http://localhost:8080/api/electronics?page=${currentPage}&size=${PAGE_SIZE}`
+          `${API_URL}/api/electronics?page=${currentPage}&size=${PAGE_SIZE}`
         );
         const response = await axios.get(
-          `http://localhost:8080/api/electronics?page=${currentPage}&size=${PAGE_SIZE}`
+          `${API_URL}/api/electronics?page=${currentPage}&size=${PAGE_SIZE}`
         );
         console.log("Response received:", response.data);
         setElectronics(response.data.content);
