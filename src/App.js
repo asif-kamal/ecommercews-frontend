@@ -9,6 +9,7 @@ import Login from './components/pages/Login';
 import Register from './components/pages/Register';
 import EmailVerification from './components/pages/EmailVerification';
 import OAuth2LoginCallback from './components/pages/OAuth2LoginCallback'; // Add this
+import TokenExtractor from './components/pages/TokenExtractor'; // Add this
 import { Provider } from 'react-redux';
 import store from './store';
 import { CartProvider } from './context/CartContext';
@@ -28,6 +29,7 @@ function App() {
             <Route path="register" element={<Register />} />
             <Route path="verify-email" element={<EmailVerification />} />
             <Route path="oauth2/callback" element={<OAuth2LoginCallback />} /> {/* Add this */}
+            <Route path="token-extractor" element={<TokenExtractor />} /> {/* Quick fix for manual token extraction */}
             <Route path="computers" element={<ElectronicsDisplay />} />
             <Route path="tv" element={<ElectronicsDisplay />} />
             <Route path="audiovideo" element={<ElectronicsDisplay />} />

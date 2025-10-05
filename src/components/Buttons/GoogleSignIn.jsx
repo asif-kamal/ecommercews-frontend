@@ -1,6 +1,6 @@
 import React from "react";
 import { useCallback } from "react";
-import API_URL from "../../config/api";
+import API_URL, { FRONTEND_URL } from "../../config/api";
 
 const GoogleSignIn = ({ context = "login" }) => {
   const handleGoogleSignIn = useCallback(() => {
@@ -13,9 +13,11 @@ const GoogleSignIn = ({ context = "login" }) => {
     const state = `${context}_${Date.now()}`;
 
     console.log("Redirecting to OAuth2 endpoint with state:", state);
+    console.log("Frontend URL for redirect:", FRONTEND_URL);
 
-    // Redirect to Spring Boot OAuth2 authorization endpoint
-    window.location.href = `${API_URL}/oauth2/authorization/google?state=${state}`;
+    // Redirect to Spring Boot OAuth2 authorization endpoint with frontend URL
+    const redirectUrl = encodeURIComponent(`${FRONTEND_URL}/oauth2/callback`);
+    window.location.href = `${API_URL}/oauth2/authorization/google?state=${state}&redirect_uri=${redirectUrl}`;
   }, [context]);
 
   const buttonText =
