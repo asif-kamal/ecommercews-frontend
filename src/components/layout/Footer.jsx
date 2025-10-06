@@ -1,5 +1,6 @@
 import FacebookIcon from "../common/FacebookIcon";
 import InstaIcon from "../common/InstagramIcon";
+import { Link } from "react-router-dom";
 
 const Footer = ({ content }) => {
   const currentYear = new Date().getFullYear();
@@ -19,13 +20,13 @@ const Footer = ({ content }) => {
                 <p className="text-[16px] pb-[10px]">{item?.title}</p>
                 {item?.list &&
                   item?.list?.map((listItem, index) => (
-                    <a
-                      className="flex flex-col text-[14px] py-2"
+                    <Link
+                      className="flex flex-col text-[14px] py-2 hover:text-gray-300 transition-colors"
                       key={index}
-                      href={listItem?.path}
+                      to="/about"
                     >
                       {listItem?.label}
-                    </a>
+                    </Link>
                   ))}
                 {item?.description && <p className="">{item?.description}</p>}
               </div>
@@ -33,12 +34,12 @@ const Footer = ({ content }) => {
           })}
       </div>
       <div className="flex gap-2 items-center justify-center py-4">
-        <a href="/fb">
+        <Link to="/about" className="hover:opacity-75 transition-opacity">
           <FacebookIcon />
-        </a>
-        <a href="/ig">
+        </Link>
+        <Link to="/about" className="hover:opacity-75 transition-opacity">
           <InstaIcon />
-        </a>
+        </Link>
       </div>
       <p className="text-sm text-white text-center content-center">
         {updatedCopyright}

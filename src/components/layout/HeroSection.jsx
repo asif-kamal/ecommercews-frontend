@@ -1,4 +1,5 @@
 import HeroImg from "../../assets/img/radek-grzybowski-unsplash.jpg";
+import { Link } from "react-router-dom";
 
 const HeroSection = () => {
   return (
@@ -17,9 +18,12 @@ const HeroSection = () => {
         <p className="mt-3 text-white text-outline-light sm:mt-5 sm:max-w-xl text-2xl">
           Feature-Rich / Intuitive / Powerful
         </p>
-        <button className="border rounded mt-6 border-gray-400 hover:bg-blue-950 text-white bg-black w-44 h-12">
+        <Link 
+          to="/about"
+          className="border rounded mt-6 border-gray-400 hover:bg-blue-950 text-white bg-black w-44 h-12 flex items-center justify-center transition-colors"
+        >
           Shop Now
-        </button>
+        </Link>
       </main>
     </div>
   );

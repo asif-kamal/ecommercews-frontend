@@ -116,9 +116,9 @@ const Navbar = () => {
       <div className="flex flex-wrap items-center ml-6">
         <ul className="flex items-center gap-8">
           <li>
-            <button>
+            <Link to="/about">
               <WishList />
-            </button>
+            </Link>
           </li>
           <li>
             <button onClick={handleAccountClick}>
