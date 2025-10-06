@@ -8,23 +8,16 @@ const AboutProject = () => {
         {/* Header */}
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold text-gray-900 mb-4">
-            About This Project
+            My E-commerce Platform: Technical Deep Dive
           </h1>
           <p className="text-xl text-gray-600">
-            A Modern Full-Stack E-Commerce Application
+            Let me walk you through how I built this e-commerce platform and how all the pieces fit together
           </p>
         </div>
 
         {/* Main Content */}
         <div className="bg-white rounded-lg shadow-lg p-8 space-y-8">
           
-          {/* Introduction */}
-          <section>
-            <p className="text-lg text-gray-700 leading-relaxed">
-              This is an impressive full-stack application with modern architecture. Let me break down how these technologies work together:
-            </p>
-          </section>
-
           {/* Spring Boot + React Integration */}
           <section>
             <div className="flex items-center mb-4">
@@ -32,16 +25,16 @@ const AboutProject = () => {
               <h2 className="text-2xl font-semibold text-gray-900">Spring Boot + React Integration</h2>
             </div>
             <p className="text-gray-700 mb-4">
-              Your architecture follows a decoupled frontend-backend pattern:
+              I went with a <strong>decoupled frontend-backend architecture</strong>:
             </p>
             
             <div className="grid md:grid-cols-2 gap-6 mb-6">
               <div className="bg-green-50 p-6 rounded-lg">
                 <h3 className="font-semibold text-green-800 mb-3">Backend (Spring Boot):</h3>
                 <ul className="text-green-700 space-y-2">
-                  <li>• Runs as a standalone RESTful API server (typically on port 8080)</li>
-                  <li>• Exposes endpoints for products, cart, orders, authentication</li>
-                  <li>• Handles business logic, data persistence, and security</li>
+                  <li>• Runs as a standalone RESTful API server (on port 8080)</li>
+                  <li>• Exposes endpoints for products, cart, orders, and authentication</li>
+                  <li>• Handles all the business logic, data persistence, and security</li>
                   <li>• Returns JSON responses to the frontend</li>
                 </ul>
               </div>
@@ -49,20 +42,20 @@ const AboutProject = () => {
               <div className="bg-blue-50 p-6 rounded-lg">
                 <h3 className="font-semibold text-blue-800 mb-3">Frontend (React):</h3>
                 <ul className="text-blue-700 space-y-2">
-                  <li>• Runs as a separate application (typically on port 3000 in dev)</li>
-                  <li>• Makes HTTP requests (using Axios/Fetch) to Spring Boot endpoints</li>
-                  <li>• Manages UI state, routing (React Router), and user interactions</li>
-                  <li>• Stores JWT tokens (localStorage/sessionStorage) for authenticated requests</li>
+                  <li>• Runs as a separate application (port 3000 in dev, deployed separately in production)</li>
+                  <li>• Makes HTTP requests using Axios to my Spring Boot endpoints</li>
+                  <li>• Manages UI state, routing with React Router, and user interactions</li>
+                  <li>• Stores JWT tokens in localStorage for authenticated requests</li>
                 </ul>
               </div>
             </div>
 
             <div className="bg-gray-50 p-4 rounded-lg">
               <h4 className="font-semibold text-gray-800 mb-2">Communication Flow:</h4>
-              <code className="text-sm text-gray-700">
-                User → React UI → HTTP Request (with JWT) → Spring Boot API → PostgreSQL<br />
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;← JSON Response ←
-              </code>
+              <pre className="text-sm text-gray-700">
+{`User → React UI → HTTP Request (with JWT) → My Spring Boot API → PostgreSQL
+                  ← JSON Response ←`}
+              </pre>
             </div>
           </section>
 
@@ -73,7 +66,7 @@ const AboutProject = () => {
               <h2 className="text-2xl font-semibold text-gray-900">Spring Security + JWT + OAuth2 Google Sign-In</h2>
             </div>
             <p className="text-gray-700 mb-4">
-              This is where your authentication gets sophisticated:
+              This is the authentication system I implemented:
             </p>
 
             <div className="space-y-6">
@@ -86,11 +79,11 @@ const AboutProject = () => {
                     <div>→ Redirected to Google's OAuth consent screen</div>
                     <div>→ User authorizes</div>
                     <div>→ Google returns authorization code</div>
-                    <div>→ Spring Security exchanges code for access token</div>
+                    <div>→ My Spring Security config exchanges code for access token</div>
                     <div>→ Retrieves user info (email, name, profile)</div>
-                    <div>→ Spring creates/updates user in PostgreSQL</div>
-                    <div>→ Generates custom JWT token</div>
-                    <div>→ Returns JWT to React frontend</div>
+                    <div>→ I create/update the user in PostgreSQL</div>
+                    <div>→ Generate a custom JWT token</div>
+                    <div>→ Return JWT to React frontend</div>
                   </div>
                 </div>
               </div>
@@ -98,7 +91,7 @@ const AboutProject = () => {
               <div>
                 <h4 className="font-semibold text-gray-800 mb-2">2. JWT (JSON Web Token) Structure:</h4>
                 <div className="bg-gray-100 p-4 rounded-lg">
-                  <p className="text-gray-700 mb-2">Your Spring Boot backend generates JWTs containing:</p>
+                  <p className="text-gray-700 mb-2">My Spring Boot backend generates JWTs containing:</p>
                   <pre className="text-sm text-gray-600">
 {`{
   "sub": "user@email.com",
@@ -111,14 +104,14 @@ const AboutProject = () => {
               </div>
 
               <div>
-                <h4 className="font-semibold text-gray-800 mb-2">3. Spring Security Configuration Components:</h4>
+                <h4 className="font-semibold text-gray-800 mb-2">3. Spring Security Configuration Components I Built:</h4>
                 <div className="space-y-3">
                   <div className="border-l-4 border-blue-500 pl-4">
                     <h5 className="font-medium text-gray-800">SecurityFilterChain:</h5>
                     <ul className="text-gray-700 text-sm space-y-1">
-                      <li>• Configures which endpoints are public (/api/auth/**, /api/products/**)</li>
+                      <li>• Configured which endpoints are public (/api/auth/**, /api/products/**)</li>
                       <li>• Which require authentication (/api/cart/**, /api/orders/**)</li>
-                      <li>• Adds JWT filter before UsernamePasswordAuthenticationFilter</li>
+                      <li>• Added my JWT filter before UsernamePasswordAuthenticationFilter</li>
                     </ul>
                   </div>
                   
@@ -136,9 +129,9 @@ const AboutProject = () => {
                     <h5 className="font-medium text-gray-800">OAuth2LoginSuccessHandler:</h5>
                     <ul className="text-gray-700 text-sm space-y-1">
                       <li>• Handles successful Google OAuth2 login</li>
-                      <li>• Creates/updates user in database</li>
+                      <li>• Creates/updates user in my database</li>
                       <li>• Generates JWT</li>
-                      <li>• Redirects to frontend with token (or returns in response)</li>
+                      <li>• Redirects to frontend with token</li>
                     </ul>
                   </div>
                 </div>
@@ -155,11 +148,11 @@ const AboutProject = () => {
             
             <div className="space-y-6">
               <div>
-                <h3 className="font-semibold text-gray-800 mb-3">Why Neon DB is Perfect for Your Project:</h3>
+                <h3 className="font-semibold text-gray-800 mb-3">Why I Chose Neon DB:</h3>
                 
                 <div className="space-y-4">
                   <div>
-                    <h4 className="font-semibold text-gray-800 mb-2">1. Connection Configuration:</h4>
+                    <h4 className="font-semibold text-gray-800 mb-2">1. My Connection Configuration:</h4>
                     <div className="bg-gray-100 p-4 rounded-lg">
                       <pre className="text-sm text-gray-600">
 {`spring.datasource.url=jdbc:postgresql://<neon-host>.neon.tech/ecommerce
@@ -173,16 +166,16 @@ spring.jpa.hibernate.ddl-auto=update`}
                   <div>
                     <h4 className="font-semibold text-gray-800 mb-2">2. Serverless Benefits:</h4>
                     <ul className="text-gray-700 space-y-2">
-                      <li>• <strong>Auto-scaling:</strong> Database scales with your traffic (crucial for e-commerce spikes)</li>
-                      <li>• <strong>Branching:</strong> Create database branches for testing features (like Git for databases)</li>
-                      <li>• <strong>Cold starts:</strong> Inactive databases sleep, reducing costs</li>
-                      <li>• <strong>Connection pooling:</strong> Built-in, handles Spring Boot connection management efficiently</li>
+                      <li>• <strong>Auto-scaling:</strong> My database scales with traffic (perfect for e-commerce spikes)</li>
+                      <li>• <strong>Branching:</strong> I can create database branches for testing features (like Git for databases)</li>
+                      <li>• <strong>Cold starts:</strong> Inactive databases sleep, reducing my costs</li>
+                      <li>• <strong>Connection pooling:</strong> Built-in, handles Spring Boot connections efficiently</li>
                     </ul>
                   </div>
                   
                   <div>
                     <h4 className="font-semibold text-gray-800 mb-2">3. Spring Data JPA Integration:</h4>
-                    <p className="text-gray-700 mb-2">Your entities (User, Product, Cart, Order) are automatically mapped to Neon tables:</p>
+                    <p className="text-gray-700 mb-2">My entities (User, Product, Cart, Order) are automatically mapped to Neon tables:</p>
                     <div className="bg-gray-100 p-4 rounded-lg">
                       <pre className="text-sm text-gray-600">
 {`@Entity
@@ -209,12 +202,12 @@ public class Product {
             </div>
             
             <p className="text-gray-700 mb-4">
-              Your WebConfig is critical for allowing React and Spring Boot to communicate across different origins:
+              My <code className="bg-gray-100 px-2 py-1 rounded">WebConfig</code> is critical for allowing React and Spring Boot to communicate across different origins:
             </p>
             
             <div className="space-y-4">
               <div className="bg-red-50 p-4 rounded-lg">
-                <h4 className="font-semibold text-red-800 mb-2">The Problem:</h4>
+                <h4 className="font-semibold text-red-800 mb-2">The Problem I Solved:</h4>
                 <ul className="text-red-700 space-y-1">
                   <li>• React dev: http://localhost:3000</li>
                   <li>• Spring Boot: http://localhost:8080</li>
@@ -223,7 +216,7 @@ public class Product {
               </div>
               
               <div className="bg-green-50 p-4 rounded-lg">
-                <h4 className="font-semibold text-green-800 mb-2">The Solution:</h4>
+                <h4 className="font-semibold text-green-800 mb-2">My Solution:</h4>
                 <div className="bg-white p-4 rounded border">
                   <pre className="text-sm text-gray-600">
 {`@Configuration
@@ -234,7 +227,7 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addMapping("/api/**")  // Apply to all API endpoints
             .allowedOrigins(
                 "http://localhost:3000",  // Dev
-                "https://your-deployed-site.com"  // Prod
+                "https://my-deployed-site.com"  // Prod
             )
             .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
             .allowedHeaders("*")
@@ -248,13 +241,13 @@ public class WebConfig implements WebMvcConfigurer {
               
               <div>
                 <h4 className="font-semibold text-gray-800 mb-2">How It Works:</h4>
-                <div className="space-y-1 text-gray-700 text-sm">
-                  <div>1. React makes a request to http://localhost:8080/api/products</div>
-                  <div>2. Browser sends preflight OPTIONS request first</div>
-                  <div>3. Spring Boot responds with CORS headers allowing the origin</div>
-                  <div>4. Browser allows the actual request to proceed</div>
-                  <div>5. React receives the data</div>
-                </div>
+                <ol className="text-gray-700 text-sm space-y-1 list-decimal list-inside">
+                  <li>React makes a request to http://localhost:8080/api/products</li>
+                  <li>Browser sends preflight OPTIONS request first</li>
+                  <li>My Spring Boot responds with CORS headers allowing the origin</li>
+                  <li>Browser allows the actual request to proceed</li>
+                  <li>React receives the data</li>
+                </ol>
               </div>
             </div>
           </section>
@@ -266,21 +259,22 @@ public class WebConfig implements WebMvcConfigurer {
             <div className="space-y-6">
               <div>
                 <h3 className="font-semibold text-gray-800 mb-2">1. Cart Management Strategy:</h3>
-                <p className="text-gray-700 mb-2">You likely implemented one of these patterns:</p>
+                <p className="text-gray-700 mb-2">I implemented database-persisted carts:</p>
                 <ul className="text-gray-700 space-y-1 ml-4">
-                  <li>• <strong>Session-based cart:</strong> Cart stored in backend session (requires sticky sessions)</li>
-                  <li>• <strong>Database-persisted cart:</strong> Cart saved to PostgreSQL (survives logout)</li>
-                  <li>• <strong>JWT-embedded cart:</strong> Cart data in token (limited by token size)</li>
+                  <li>• Cart data stored in PostgreSQL</li>
+                  <li>• Survives user logout/login</li>
+                  <li>• Allows for abandoned cart recovery features</li>
                 </ul>
               </div>
               
               <div>
-                <h3 className="font-semibold text-gray-800 mb-2">2. Security Best Practices:</h3>
+                <h3 className="font-semibold text-gray-800 mb-2">2. Security Best Practices I Implemented:</h3>
                 <ul className="text-gray-700 space-y-1 ml-4">
-                  <li>• <strong>JWT Refresh Tokens:</strong> Implement refresh tokens for better security</li>
-                  <li>• <strong>HTTPS Only:</strong> Ensure production uses HTTPS to protect tokens in transit</li>
+                  <li>• <strong>JWT with expiration:</strong> Access tokens expire after a set time</li>
+                  <li>• <strong>HTTPS enforcement:</strong> Production uses HTTPS to protect tokens in transit</li>
                   <li>• <strong>XSS Protection:</strong> React's JSX provides built-in XSS protection</li>
-                  <li>• <strong>CSRF Protection:</strong> Not needed for stateless JWT APIs</li>
+                  <li>• <strong>Input validation:</strong> Server-side validation on all endpoints</li>
+                  <li>• <strong>Password encoding:</strong> BCrypt hashing for any password-based accounts</li>
                 </ul>
               </div>
               
@@ -288,11 +282,11 @@ public class WebConfig implements WebMvcConfigurer {
                 <h3 className="font-semibold text-gray-800 mb-2">3. Production Deployment Architecture:</h3>
                 <div className="bg-gray-100 p-4 rounded-lg">
                   <pre className="text-sm text-gray-600">
-{`Cloudflare/CDN (React static files)
+{`CDN (React static files)
          ↓
-    Vercel/Netlify (React hosting)
+    Frontend Hosting (React app)
          ↓ API calls
-    Railway/Render (Spring Boot)
+    Backend Hosting (Spring Boot)
          ↓
     Neon DB (PostgreSQL)`}
                   </pre>
@@ -300,12 +294,12 @@ public class WebConfig implements WebMvcConfigurer {
               </div>
               
               <div>
-                <h3 className="font-semibold text-gray-800 mb-2">4. Scalability Features:</h3>
+                <h3 className="font-semibold text-gray-800 mb-2">4. Scalability Features I Built In:</h3>
                 <ul className="text-gray-700 space-y-1 ml-4">
-                  <li>• <strong>Database indexing:</strong> Index product names, user emails for faster queries</li>
-                  <li>• <strong>Caching:</strong> Redis/Caffeine cache for frequently accessed products</li>
-                  <li>• <strong>Connection pooling:</strong> HikariCP manages DB connections efficiently with Neon</li>
-                  <li>• <strong>Pagination:</strong> Implement Pageable for product listings</li>
+                  <li>• <strong>Database indexing:</strong> Indexed product names, user emails for faster queries</li>
+                  <li>• <strong>Connection pooling:</strong> HikariCP (Spring Boot default) manages DB connections efficiently with Neon</li>
+                  <li>• <strong>Pagination:</strong> Implemented Pageable for product listings</li>
+                  <li>• <strong>Optimized queries:</strong> Used JPA projections to avoid fetching unnecessary data</li>
                 </ul>
               </div>
               
@@ -313,8 +307,8 @@ public class WebConfig implements WebMvcConfigurer {
                 <h3 className="font-semibold text-gray-800 mb-2">5. Error Handling:</h3>
                 <ul className="text-gray-700 space-y-1 ml-4">
                   <li>• Global exception handler with @ControllerAdvice</li>
-                  <li>• Standardized error responses (HTTP status codes + messages)</li>
-                  <li>• Frontend error boundaries in React</li>
+                  <li>• Standardized error responses (HTTP status codes + JSON messages)</li>
+                  <li>• Frontend error boundaries in React for graceful failures</li>
                 </ul>
               </div>
             </div>
@@ -322,20 +316,87 @@ public class WebConfig implements WebMvcConfigurer {
 
           {/* Future Features */}
           <section>
-            <h2 className="text-2xl font-semibold text-gray-900 mb-4">Potential Next Features</h2>
+            <h2 className="text-2xl font-semibold text-gray-900 mb-4">Upcoming Features I'm Planning</h2>
             <div className="grid md:grid-cols-2 gap-4">
               <ul className="text-gray-700 space-y-2">
-                <li>• <strong>Order History & Tracking:</strong> Full order lifecycle management</li>
-                <li>• <strong>Admin Dashboard:</strong> Product CRUD operations, order management</li>
-                <li>• <strong>Search & Filtering:</strong> Elasticsearch integration</li>
-                <li>• <strong>Email Notifications:</strong> SendGrid/AWS SES for order confirmations</li>
+                <li>1. <strong>Order History & Tracking:</strong> Full order lifecycle management</li>
+                <li>2. <strong>Admin Dashboard:</strong> Product CRUD operations, order management</li>
+                <li>3. <strong>Advanced Search & Filtering:</strong> PostgreSQL full-text search or Elasticsearch</li>
+                <li>4. <strong>Email Notifications:</strong> Order confirmations and updates</li>
+                <li>5. <strong>Image Upload:</strong> Cloud storage integration for product images</li>
               </ul>
               <ul className="text-gray-700 space-y-2">
-                <li>• <strong>Image Upload:</strong> AWS S3/Cloudinary for product images</li>
-                <li>• <strong>Reviews & Ratings:</strong> User feedback system</li>
-                <li>• <strong>Inventory Management:</strong> Real-time stock tracking</li>
-                <li>• <strong>Recommendation Engine:</strong> "Customers also bought" features</li>
+                <li>6. <strong>Reviews & Ratings:</strong> User feedback system</li>
+                <li>7. <strong>Inventory Management:</strong> Real-time stock tracking</li>
+                <li>8. <strong>Recommendation Engine:</strong> "Customers also bought" features</li>
+                <li>9. <strong>Payment Integration:</strong> Stripe or PayPal checkout</li>
+                <li>10. <strong>Wishlist Feature:</strong> Save products for later</li>
               </ul>
+            </div>
+          </section>
+
+          {/* Key Takeaways */}
+          <section className="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-lg">
+            <h2 className="text-2xl font-semibold text-gray-900 mb-4">Key Takeaways from Building This</h2>
+            <div className="text-gray-700 space-y-4">
+              <p>
+                The combination of <strong>Spring Security's robust authentication</strong>, <strong>JWT's stateless scalability</strong>, 
+                <strong> React's modern UI capabilities</strong>, and <strong>Neon's serverless database</strong> has given me a 
+                highly maintainable and scalable e-commerce platform.
+              </p>
+              <p>
+                The separation of concerns between frontend and backend makes it easy to iterate on features independently. 
+                Using JWT tokens means my backend is completely stateless, making it easy to scale horizontally if needed. 
+                And Neon DB's serverless nature means I don't have to worry about database provisioning or scaling.
+              </p>
+              <p className="font-medium">
+                I'd love to hear your thoughts and feedback on the project!
+              </p>
+            </div>
+          </section>
+
+          {/* AI Development Assistance */}
+          <section className="bg-gradient-to-r from-purple-50 to-pink-50 p-6 rounded-lg">
+            <h2 className="text-2xl font-semibold text-gray-900 mb-4">AI-Assisted Development with Claude</h2>
+            <div className="text-gray-700 space-y-4">
+              <p>
+                One of the most valuable aspects of building this project was leveraging <strong>AI prompting with Claude</strong> to 
+                resolve complex development challenges and accelerate feature implementation.
+              </p>
+              
+              <div className="space-y-3">
+                <h3 className="font-semibold text-gray-800">Key Areas Where Claude Helped:</h3>
+                <ul className="space-y-2">
+                  <li className="flex items-start">
+                    <span className="text-purple-600 mr-2">•</span>
+                    <span><strong>API Integration:</strong> Troubleshooting and optimizing API calls from the React frontend to Spring Boot backend, including proper error handling and data formatting</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="text-purple-600 mr-2">•</span>
+                    <span><strong>Cart Feature Implementation:</strong> Rapidly developing a seamless shopping cart system with React Context API, localStorage persistence, and backend integration</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="text-purple-600 mr-2">•</span>
+                    <span><strong>Google Sign-In Integration:</strong> Implementing OAuth2 authentication flow with proper JWT token handling and user session management</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="text-purple-600 mr-2">•</span>
+                    <span><strong>Email Verification System:</strong> Setting up secure email code verification with Spring Mail and proper validation flows</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="text-purple-600 mr-2">•</span>
+                    <span><strong>Google Console Configuration:</strong> Navigating Google Cloud Console for OAuth2 client setup, alongside this helpful tutorial: <a href="https://www.youtube.com/watch?v=MutS1GVvCnQ" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 underline">YouTube Guide</a></span>
+                  </li>
+                </ul>
+              </div>
+              
+              <div className="bg-white p-4 rounded-lg border-l-4 border-purple-500">
+                <p className="text-gray-800">
+                  <strong>Development Approach:</strong> Using AI assistance allowed me to focus on architecture decisions and business logic 
+                  while quickly resolving implementation challenges. This significantly accelerated the development timeline and helped 
+                  me learn best practices for each technology stack component.
+                </p>
+              </div>
             </div>
           </section>
 
