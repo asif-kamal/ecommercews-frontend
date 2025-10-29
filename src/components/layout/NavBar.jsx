@@ -80,6 +80,14 @@ const Navbar = () => {
               Shop
             </button>
           </li>
+          <li>
+            <Link
+              to="/about"
+              className="text-lg font-normal text-black hover:text-blue-700"
+            >
+              About
+            </Link>
+          </li>
         </ul>
 
         {/* Search Bar aligned with links */}
