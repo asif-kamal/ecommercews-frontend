@@ -1,5 +1,13 @@
 import React from "react";
-import { Linkedin, Mail, Code, Database, Shield, Globe } from "lucide-react";
+import {
+  Linkedin,
+  Mail,
+  Code,
+  Database,
+  Shield,
+  Globe,
+  Github,
+} from "lucide-react";
 
 const AboutProject = () => {
   return (
@@ -654,6 +662,15 @@ public class WebConfig implements WebMvcConfigurer {
                   >
                     <Linkedin size={20} />
                     <span>LinkedIn</span>
+                  </a>
+                  <a
+                    href="https://github.com/asif-kamal/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center space-x-2 text-blue-600 hover:text-blue-800 transition"
+                  >
+                    <Github size={20} />
+                    <span>GitHub</span>
                   </a>
                 </div>
               </div>
